@@ -5,6 +5,5 @@ export class Property {
         public position: number,
         public name: string,
         public type: number,
-        public blockId?: number
     ) { }
 }

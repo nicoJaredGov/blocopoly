@@ -1,6 +1,6 @@
 'use client'
 
-import { Property } from "./Property"
+import { Property } from "../property/Property"
 
 export default function Cell({ property, color }: { property: Property, color: string | undefined }) {
   return (
