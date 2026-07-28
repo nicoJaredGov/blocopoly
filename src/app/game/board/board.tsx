@@ -8,22 +8,29 @@ export default function Board() {
     return (
         <Box
             style={{
+                backgroundColor: "#83d0e0",
                 display: 'grid',
-                gridTemplateColumns: 'repeat(11, 73px)',
-                gridTemplateRows: 'repeat(11, 73px)',
+                gridTemplateColumns: '90px repeat(9, 58px) 90px',
+                gridTemplateRows: '90px repeat(9, 58px) 90px',
                 gap: '0px',
-                border: '2px solid black',
+                border: '1px solid black',
                 width: 'fit-content',
                 margin: '10px',
             }}
         >
-            {defaultProperties.map((property, index) => (
-                <Cell
-                    key={index}
-                    property={property}
-                    color={!!property?.blockId ? defaultPropertyBlocks.get(property.blockId)?.color : undefined}
-                />
-            ))}
+            {defaultProperties.map((property, index) => {
+                const color = property.blockId !== undefined
+                    ? defaultPropertyBlocks.get(property.blockId)?.color
+                    : undefined;
+
+                return (
+                    <Cell
+                        key={index}
+                        property={property}
+                        color={color}
+                    />
+                );
+            })}
         </Box>
     );
 }
