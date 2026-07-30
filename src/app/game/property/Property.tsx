@@ -4,6 +4,6 @@ export class Property {
         public col: number,
         public position: number,
         public name: string,
-        public type: number,
-    ) { }
+        public type: number
+    ) {}
 }

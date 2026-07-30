@@ -14,30 +14,30 @@ export class OwnableProperty extends Property {
         public name: string,
         public type: number,
         public blockId: number,
-        public baseRentWeighting: number,
+        public baseRentWeighting: number
     ) {
-        super(row, col, position, name, type)
+        super(row, col, position, name, type);
     }
 
     private calculateBaseRent(marketCap: number) {
-        return marketCap * (this.baseRentWeighting / 100)
+        return marketCap * (this.baseRentWeighting / 100);
     }
 
     public buyProperty(playerId: number, marketCap: number) {
-        this.owner = playerId
-        this.baseRent = this.calculateBaseRent(marketCap)
-        this.rent = this.baseRent
+        this.owner = playerId;
+        this.baseRent = this.calculateBaseRent(marketCap);
+        this.rent = this.baseRent;
     }
 
     public buyHouse(hasWholeBlock: boolean) {
         if (this.numHouses == 5) {
-            return
+            return;
         }
 
-        this.numHouses += 1
-        this.rent = this.baseRent * this.numHouses
+        this.numHouses += 1;
+        this.rent = this.baseRent * this.numHouses;
         if (hasWholeBlock) {
-            this.rent *= 2
+            this.rent *= 2;
         }
     }
 }

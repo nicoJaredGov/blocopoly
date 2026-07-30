@@ -7,5 +7,5 @@ export class Player {
         public isHost: boolean,
         public inJail: boolean,
         public propertiesOwned: number[]
-    ) { }
+    ) {}
 }

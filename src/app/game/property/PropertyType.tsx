@@ -9,4 +9,4 @@ export const PropertyType = {
     GO_TO_JAIL: 7,
     POWER: 8,
     WATER: 9
-}
+};

@@ -1,4 +1,4 @@
-import { PropertyType } from "../../property/constants";
+import { PropertyType } from "../../property/PropertyType";
 import { OwnableProperty } from "../../property/OwnableProperty";
 import { Property } from "../../property/Property";
 import { PropertyBlock } from "../../property/PropertyBlock";
@@ -13,7 +13,7 @@ export const customPropertyBlocks = new Map<number, PropertyBlock>([
     [6, new PropertyBlock("Green", 6, "#008000")],
     [7, new PropertyBlock("Dark Blue", 7, "#4141b3")],
     [8, new PropertyBlock("Railroad", 8, "black")],
-    [9, new PropertyBlock("Utility", 9, "#D3D3D3")],
+    [9, new PropertyBlock("Utility", 9, "#D3D3D3")]
 ]);
 
 export const customProperties: Property[] = [
@@ -60,5 +60,5 @@ export const customProperties: Property[] = [
     new Property(7, 1, 36, "CHANCE", PropertyType.SURPRISE),
     new OwnableProperty(8, 1, 37, "The Pozi", PropertyType.RESIDENTIAL, 7, 85),
     new Property(9, 1, 38, "Luxury Tax", PropertyType.TAX),
-    new OwnableProperty(10, 1, 39, "The Sections", PropertyType.RESIDENTIAL, 7, 90),
+    new OwnableProperty(10, 1, 39, "The Sections", PropertyType.RESIDENTIAL, 7, 90)
 ];
