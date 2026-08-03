@@ -1,7 +1,5 @@
-export class PropertyBlock {
-    constructor(
-        public name: string,
-        public id: number,
-        public color: string
-    ) {}
+export interface PropertyBlock {
+    name: string;
+    id: number;
+    color: string;
 }

@@ -1,43 +1,45 @@
-import { Property } from "./Property";
+import { PropertyTypeValue } from "./PropertyType";
 
-export class OwnableProperty extends Property {
-    public numHouses: number = 0;
-    public isMortgaged: boolean = false;
-    public owner: number | undefined;
-    public baseRent: number = 0;
-    public rent: number = 0;
+/**
+ * Represents a property that can be owned, mortgaged, and built on.
+ * This is a plain data interface — all mutations are handled by pure
+ * functions in the reducer, not by methods on this type.
+ */
+export interface OwnableProperty {
+    // Grid position (for rendering)
+    row: number;
+    col: number;
+    // Board position (0-39)
+    position: number;
+    name: string;
+    type: PropertyTypeValue;
+    blockId: number;
+    /** Weighting used to derive baseRent from the game's marketCap setting */
+    baseRentWeighting: number;
+    numHouses: number;
+    isMortgaged: boolean;
+    /** Player id of the owner, or undefined if unowned */
+    owner: number | undefined;
+    baseRent: number;
+    rent: number;
+}
 
-    constructor(
-        public row: number,
-        public col: number,
-        public position: number,
-        public name: string,
-        public type: number,
-        public blockId: number,
-        public baseRentWeighting: number
-    ) {
-        super(row, col, position, name, type);
-    }
+export function isOwnableProperty(p: object): p is OwnableProperty {
+    return typeof (p as OwnableProperty).blockId === "number";
+}
 
-    private calculateBaseRent(marketCap: number) {
-        return marketCap * (this.baseRentWeighting / 100);
-    }
+export function buyProperty(
+    property: OwnableProperty,
+    playerId: number,
+    marketCap: number
+): OwnableProperty {
+    const baseRent = marketCap * (property.baseRentWeighting / 100);
+    return { ...property, owner: playerId, baseRent, rent: baseRent };
+}
 
-    public buyProperty(playerId: number, marketCap: number) {
-        this.owner = playerId;
-        this.baseRent = this.calculateBaseRent(marketCap);
-        this.rent = this.baseRent;
-    }
-
-    public buyHouse(hasWholeBlock: boolean) {
-        if (this.numHouses == 5) {
-            return;
-        }
-
-        this.numHouses += 1;
-        this.rent = this.baseRent * this.numHouses;
-        if (hasWholeBlock) {
-            this.rent *= 2;
-        }
-    }
+export function buyHouse(property: OwnableProperty, hasWholeBlock: boolean): OwnableProperty {
+    if (property.numHouses >= 5) return property;
+    const numHouses = property.numHouses + 1;
+    const rent = property.baseRent * numHouses * (hasWholeBlock ? 2 : 1);
+    return { ...property, numHouses, rent };
 }

@@ -2,11 +2,16 @@
 
 import { Box } from "@mui/material";
 import Board from "./board/board";
-import { initialState, gameStateReducer } from "./GameState";
+import { getInitialState, gameStateReducer } from "./GameState";
+import { customProperties } from "./board/board_configs/customBoard";
 import React, { useReducer } from "react";
 
+// Temporary: initialise with no players for local dev rendering.
+// In production this state will arrive from the WebSocket server.
+const devInitialState = getInitialState([], customProperties);
+
 export default function GamePage() {
-    const [state, dispatch] = useReducer(gameStateReducer, initialState);
+    const [state, dispatch] = useReducer(gameStateReducer, devInitialState);
 
     return (
         <Box
@@ -17,7 +22,7 @@ export default function GamePage() {
                 minHeight: "100vh"
             }}
         >
-            <Board />
+            <Board board={state.board} />
         </Box>
     );
 }

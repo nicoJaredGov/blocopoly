@@ -9,4 +9,6 @@ export const PropertyType = {
     GO_TO_JAIL: 7,
     POWER: 8,
     WATER: 9
-};
+} as const;
+
+export type PropertyTypeValue = (typeof PropertyType)[keyof typeof PropertyType];

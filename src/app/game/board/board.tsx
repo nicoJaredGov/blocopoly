@@ -2,10 +2,15 @@
 
 import { Box } from "@mui/material";
 import Cell from "./cell";
-import { customProperties, customPropertyBlocks } from "./board_configs/customBoard";
-import { OwnableProperty } from "../property/OwnableProperty";
+import { customPropertyBlocks } from "./board_configs/customBoard";
+import { isOwnableProperty, OwnableProperty } from "../property/OwnableProperty";
+import { Property } from "../property/Property";
 
-export default function Board() {
+interface BoardProps {
+    board: (Property | OwnableProperty)[];
+}
+
+export default function Board({ board }: BoardProps) {
     return (
         <Box
             style={{
@@ -19,11 +24,10 @@ export default function Board() {
                 margin: "10px"
             }}
         >
-            {customProperties.map((property, index) => {
-                const color =
-                    property instanceof OwnableProperty
-                        ? customPropertyBlocks.get(property.blockId)?.color
-                        : undefined;
+            {board.map((property, index) => {
+                const color = isOwnableProperty(property)
+                    ? customPropertyBlocks[property.blockId]?.color
+                    : undefined;
 
                 return <Cell key={index} property={property} color={color} />;
             })}
