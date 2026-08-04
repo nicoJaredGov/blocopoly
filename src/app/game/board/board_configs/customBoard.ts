@@ -36,6 +36,7 @@ function owned(
     baseRentWeighting: number
 ): OwnableProperty {
     return {
+        // Static config
         row,
         col,
         position,
@@ -43,6 +44,7 @@ function owned(
         type,
         blockId,
         baseRentWeighting,
+        // Initial mutable state
         numHouses: 0,
         isMortgaged: false,
         owner: undefined,
@@ -70,7 +72,7 @@ export const customProperties: (Property | OwnableProperty)[] = [
     owned(8, 11, 13, "Sandton", PropertyType.RESIDENTIAL, 2, 35),
     owned(7, 11, 14, "Wits", PropertyType.RESIDENTIAL, 2, 40),
     owned(6, 11, 15, "Gautrain", PropertyType.AIRPORT, 8, 150),
-    owned(5, 11, 16, "Brackenfell", PropertyType.RESIDENTIAL, 3, 40),
+    owned(5, 11, 16, "Chatsworth", PropertyType.RESIDENTIAL, 3, 40),
     prop(4, 11, 17, "Community Chest", PropertyType.SURPRISE),
     owned(3, 11, 18, "Cape Town", PropertyType.RESIDENTIAL, 3, 45),
     owned(2, 11, 19, "PMB", PropertyType.RESIDENTIAL, 3, 50),
