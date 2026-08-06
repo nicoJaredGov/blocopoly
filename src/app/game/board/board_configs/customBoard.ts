@@ -1,5 +1,5 @@
 import { PropertyType } from "../../property/PropertyType";
-import { OwnableProperty } from "../../property/OwnableProperty";
+import { OwnablePropertyConfig } from "../../property/OwnableProperty";
 import { Property } from "../../property/Property";
 import { PropertyBlock } from "../../property/PropertyBlock";
 
@@ -31,29 +31,14 @@ function owned(
     col: number,
     position: number,
     name: string,
-    type: OwnableProperty["type"],
+    type: OwnablePropertyConfig["type"],
     blockId: number,
     baseRentWeighting: number
-): OwnableProperty {
-    return {
-        // Static config
-        row,
-        col,
-        position,
-        name,
-        type,
-        blockId,
-        baseRentWeighting,
-        // Initial mutable state
-        numHouses: 0,
-        isMortgaged: false,
-        owner: undefined,
-        baseRent: 0,
-        rent: 0
-    };
+): OwnablePropertyConfig {
+    return { row, col, position, name, type, blockId, baseRentWeighting };
 }
 
-export const customProperties: (Property | OwnableProperty)[] = [
+export const customProperties: (Property | OwnablePropertyConfig)[] = [
     // Bottom row (row 11)
     prop(11, 1, 0, "GO", PropertyType.START),
     owned(11, 2, 1, "Tel Aviv", PropertyType.RESIDENTIAL, 0, 5),

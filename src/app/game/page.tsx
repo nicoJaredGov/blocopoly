@@ -2,9 +2,9 @@
 
 import { Box } from "@mui/material";
 import Board from "./board/board";
-import { getInitialState, gameStateReducer } from "./GameState";
+import { getInitialState, gameStateReducer } from "./state/GameState";
 import { customProperties } from "./board/board_configs/customBoard";
-import { toGameStateVM } from "./viewModels";
+import { toGameStateVM } from "./state/viewModels";
 import React, { useReducer } from "react";
 
 // Temporary: initialise with no players for local dev rendering.

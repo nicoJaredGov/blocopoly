@@ -1,11 +1,28 @@
 import { PropertyTypeValue } from "./PropertyType";
 
 /**
+ * Static config for an ownable property — loaded once at session start from board config.
+ * Contains no mutable state; this is the source of truth for display/position/pricing.
+ */
+export interface OwnablePropertyConfig {
+    /** Board position (0–39) — used as the key to look up mutable state */
+    position: number;
+    // Grid position (for rendering)
+    row: number;
+    col: number;
+    name: string;
+    type: PropertyTypeValue;
+    blockId: number;
+    /** Weighting used to derive baseRent from the game's marketCap setting */
+    baseRentWeighting: number;
+}
+
+/**
  * Serialized ownable property state — only mutable fields sent over the wire.
- * Static config (row, col, name, type, blockId, baseRentWeighting) lives in OwnablePropertyVM.
+ * Keyed by position in GameStateDTO.ownedProperties.
  */
 export interface OwnablePropertyDTO {
-    /** Board position (0–39) — used as the key to look up static config on the client */
+    /** Board position (0–39) — key to look up static config on the client */
     position: number;
     numHouses: number;
     isMortgaged: boolean;
@@ -16,18 +33,15 @@ export interface OwnablePropertyDTO {
 }
 
 /**
- * Client-side view model — merges serialized OwnableProperty state with static
- * config loaded once at session start from the board config.
+ * Client-side view model — merges serialized OwnablePropertyDTO state with static
+ * OwnablePropertyConfig loaded once at session start from the board config.
  */
-export interface OwnableProperty extends OwnablePropertyDTO {
-    // Grid position (for rendering)
-    row: number;
-    col: number;
-    name: string;
-    type: PropertyTypeValue;
-    blockId: number;
-    /** Weighting used to derive baseRent from the game's marketCap setting */
-    baseRentWeighting: number;
+export interface OwnableProperty extends OwnablePropertyConfig {
+    numHouses: number;
+    isMortgaged: boolean;
+    owner: number | undefined;
+    baseRent: number;
+    rent: number;
 }
 
 export function isOwnableProperty(p: object): p is OwnableProperty {

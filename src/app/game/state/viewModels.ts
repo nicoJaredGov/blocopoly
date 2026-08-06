@@ -1,6 +1,12 @@
-import { PlayerDTO, Player } from "./player/Player";
-import { OwnablePropertyDTO, OwnableProperty } from "./property/OwnableProperty";
-import { Property } from "./property/Property";
+import { PlayerDTO, Player } from "../player/Player";
+import {
+    OwnablePropertyConfig,
+    OwnablePropertyDTO,
+    OwnableProperty
+} from "../property/OwnableProperty";
+import { Property } from "../property/Property";
+import { Trade } from "../trades/Trade";
+import { Stage } from "./Stage";
 import { GameStateDTO } from "./GameState";
 
 /**
@@ -14,60 +20,63 @@ export interface GameState {
     currentPlayer: number;
     players: Record<number, Player>;
     /**
-     * Full board as view models — static PropertyVM cells merged with
-     * hydrated OwnablePropertyVM cells reflecting current mutable state.
+     * Full board — static Property/OwnablePropertyConfig cells hydrated with
+     * mutable OwnablePropertyDTO state where available.
      */
     board: (Property | OwnableProperty)[];
-    trades: import("./trades/Trade").Trade[];
-    stage: import("./Stage").Stage;
+    trades: Trade[];
+    stage: Stage;
 }
 
 // ---------------------------------------------------------------------------
 // Static config shapes — provided once at session start from board/lobby data
 // ---------------------------------------------------------------------------
 
-/** Static fields for a player, provided at session start (lobby/game setup). */
-export type PlayerConfig = Pick<Player, "id" | "name" | "piece" | "colour" | "isHost">;
+/**
+ * Static display config for a player, provided at session start (lobby/game setup).
+ * isHost is on PlayerDTO since the server needs it for authority checks.
+ */
+export type PlayerConfig = Pick<Player, "id" | "name" | "piece" | "colour">;
 
 // ---------------------------------------------------------------------------
 // Hydration functions
 // ---------------------------------------------------------------------------
 
 /**
- * Merges mutable Player state with static config to produce a PlayerVM.
+ * Merges mutable PlayerDTO state with static PlayerConfig to produce a Player view model.
  */
 export function toPlayerVM(player: PlayerDTO, config: PlayerConfig): Player {
     return {
         ...player,
         name: config.name,
         piece: config.piece,
-        colour: config.colour,
-        isHost: config.isHost
+        colour: config.colour
     };
 }
 
 /**
- * Merges mutable OwnableProperty state with its static config entry to
- * produce an OwnablePropertyVM.
+ * Merges a mutable OwnablePropertyDTO with its static OwnablePropertyConfig
+ * to produce a full OwnableProperty view model.
  */
 export function toOwnablePropertyVM(
-    property: OwnablePropertyDTO,
-    config: Omit<OwnableProperty, keyof OwnablePropertyDTO>
+    dto: OwnablePropertyDTO,
+    config: OwnablePropertyConfig
 ): OwnableProperty {
-    return { ...property, ...config };
+    return { ...config, ...dto };
 }
 
 /**
- * Produces a full GameStateVM by hydrating all players and merging mutable
- * ownable property state into the static board config array.
+ * Produces a full GameState view model by hydrating all players and merging
+ * mutable owned property state into the static board config array.
  *
  * @param state         - Lean serialized game state from the server.
- * @param boardConfig   - Static board layout (PropertyVM | OwnablePropertyVM) loaded once at startup.
- * @param playerConfigs - Static player config keyed by player id.
+ * @param boardConfig   - Static board layout loaded once at startup.
+ * @param playerConfigs - Static player display config keyed by player id.
+ * @param currentPlayer - The player id of the local client.
  */
 export function toGameStateVM(
     state: GameStateDTO,
-    boardConfig: (Property | OwnableProperty)[],
+    boardConfig: (Property | OwnablePropertyConfig)[],
     playerConfigs: Record<number, PlayerConfig>,
     currentPlayer: number
 ): GameState {
@@ -78,12 +87,12 @@ export function toGameStateVM(
     }
 
     const board: (Property | OwnableProperty)[] = boardConfig.map((cell) => {
-        const mutableState = state.ownedProperties[cell.position];
-        // If there's mutable state for this position, overlay it onto the static config
-        if (mutableState) {
-            return { ...cell, ...mutableState } as OwnableProperty;
+        const dto = state.ownedProperties[cell.position];
+        if (dto) {
+            // Overlay mutable state onto the static config
+            return toOwnablePropertyVM(dto, cell as OwnablePropertyConfig);
         }
-        return cell;
+        return cell as Property;
     });
 
     return {

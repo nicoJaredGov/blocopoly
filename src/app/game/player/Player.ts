@@ -2,7 +2,6 @@ import { PlayerStage } from "./PlayerStage";
 
 /**
  * Serialized player state — only mutable fields sent over the wire.
- * Static config (name, piece, colour, isHost) lives in PlayerVM.
  */
 export interface PlayerDTO {
     id: number;
@@ -12,8 +11,6 @@ export interface PlayerDTO {
     jailTurnsElapsed: number;
     /** Number of consecutive times a double has been rolled */
     doublesRolled: number;
-    /** Array of board positions of properties owned by this player */
-    propertiesOwned: number[];
     stage: PlayerStage;
     isHost: boolean;
 }
