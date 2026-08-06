@@ -8,6 +8,9 @@ import { GameStateDTO } from "./GameState";
  * static board config so UI components have everything in one place.
  */
 export interface GameState {
+    /** The player who is playing their turn now. */
+    activePlayer: number;
+    /** The current player on this client device. */
     currentPlayer: number;
     players: Record<number, Player>;
     /**
@@ -65,7 +68,8 @@ export function toOwnablePropertyVM(
 export function toGameStateVM(
     state: GameStateDTO,
     boardConfig: (Property | OwnableProperty)[],
-    playerConfigs: Record<number, PlayerConfig>
+    playerConfigs: Record<number, PlayerConfig>,
+    currentPlayer: number
 ): GameState {
     const players: Record<number, Player> = {};
     for (const [idStr, player] of Object.entries(state.players)) {
@@ -83,7 +87,8 @@ export function toGameStateVM(
     });
 
     return {
-        currentPlayer: state.currentPlayer,
+        activePlayer: state.activePlayer,
+        currentPlayer,
         players,
         board,
         trades: state.trades,

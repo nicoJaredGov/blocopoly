@@ -17,7 +17,7 @@ export default function GamePage() {
 
     // Hydrate the lean server state into a full view model for the UI.
     // customProperties is the static board config loaded once at startup.
-    const vm = toGameStateVM(state, customProperties, {});
+    const vm = toGameStateVM(state, customProperties, {}, 0);
 
     return (
         <Box

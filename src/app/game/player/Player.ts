@@ -10,6 +10,8 @@ export interface PlayerDTO {
     boardPosition: number;
     /** Counts consecutive turns spent in jail (0–2); resets on release */
     jailTurnsElapsed: number;
+    /** Number of consecutive times a double has been rolled */
+    doublesRolled: number;
     /** Array of board positions of properties owned by this player */
     propertiesOwned: number[];
     stage: PlayerStage;
