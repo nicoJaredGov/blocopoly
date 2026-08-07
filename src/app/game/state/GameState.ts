@@ -3,7 +3,7 @@ import { Stage } from "./Stage";
 import { Trade } from "../trades/Trade";
 import { OwnablePropertyDTO } from "../property/OwnableProperty";
 import { GameStateAction } from "./GameStateAction";
-import { rollDice } from "./reducers/rollDice";
+import { rollDice, endTurn } from "./reducers";
 
 /**
  * Serialized game state — only mutable data sent over the wire.
@@ -32,7 +32,9 @@ export function getInitialState(players: Record<number, PlayerDTO>): GameStateDT
 export function gameStateReducer(state: GameStateDTO, action: GameStateAction): GameStateDTO {
     switch (action.type) {
         case "ROLL_DICE":
-            return rollDice(state, action.payload.playerId);
+            return rollDice(state);
+        case "END_TURN":
+            return endTurn(state);
         default:
             return state;
     }

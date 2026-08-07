@@ -1,8 +1,8 @@
 import { Trade } from "../trades/Trade";
 
 export type GameStateAction =
-    | { type: "ROLL_DICE"; payload: { playerId: number } }
-    | { type: "END_TURN"; payload: { playerId: number } }
+    | { type: "ROLL_DICE" }
+    | { type: "END_TURN" }
     | {
           type: "BUY_PROPERTY";
           payload: { playerId: number; propertyPosition: number; marketCap: number };

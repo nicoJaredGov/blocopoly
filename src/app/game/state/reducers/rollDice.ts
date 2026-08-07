@@ -1,5 +1,5 @@
 import { GameStateDTO } from "../GameState";
-import { updatePlayer } from "../utils";
+import { getActivePlayer, updatePlayer } from "../utils";
 
 const NUM_BOARD_POSITIONS = 40;
 const DOUBLES_LIMIT = 3;
@@ -11,8 +11,8 @@ function rollD6(): D6Result {
     return (Math.floor(Math.random() * 6) + 1) as D6Result;
 }
 
-export function rollDice(state: GameStateDTO, playerId: number): GameStateDTO {
-    const player = { ...state.players[playerId] };
+export function rollDice(state: GameStateDTO): GameStateDTO {
+    const player = getActivePlayer(state);
 
     const firstDice = rollD6();
     const secondDice = rollD6();

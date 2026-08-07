@@ -3,6 +3,14 @@ import { OwnablePropertyDTO } from "../property/OwnableProperty";
 import { GameStateDTO } from "./GameState";
 
 /**
+ * Returns a clone of the current active player.
+ */
+export function getActivePlayer(state: GameStateDTO): PlayerDTO {
+    const playerId = state.activePlayer;
+    return { ...state.players[playerId] };
+}
+
+/**
  * Returns a new state with a single player's record updated.
  */
 export function updatePlayer(state: GameStateDTO, player: PlayerDTO): GameStateDTO {
