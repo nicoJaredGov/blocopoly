@@ -48,7 +48,7 @@ export function isOwnableProperty(p: object): p is OwnableProperty {
     return typeof (p as OwnableProperty).blockId === "number";
 }
 
-export function buyProperty(
+export function buyOwnableProperty(
     property: OwnablePropertyDTO,
     playerId: number,
     marketCap: number,
