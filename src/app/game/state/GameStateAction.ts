@@ -17,7 +17,7 @@ export type GameStateAction =
     | { type: "SELL_PROPERTY"; payload: { playerId: number; propertyPosition: number } }
     | {
           type: "BUY_HOUSE";
-          payload: { propertyPosition: number; baseRent: number; hasWholeBlock: boolean };
+          payload: { propertyPosition: number };
       }
     | { type: "ADD_TRADE"; payload: Trade }
     | { type: "EDIT_TRADE"; payload: { tradeId: number; updated: Trade } }

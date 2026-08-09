@@ -54,26 +54,17 @@ export function buyOwnableProperty(
     baseRent: number,
     hasWholeBlock: boolean
 ): OwnablePropertyDTO {
-    const rent = calculateRent(baseRent, 0, hasWholeBlock);
+    const rent = baseRent * (hasWholeBlock ? 2 : 1);
     return { ...property, owner: playerId, baseRent, rent };
 }
 
-export function buyHouseOnProperty(
-    property: OwnablePropertyDTO,
-    hasWholeBlock: boolean,
-    baseRent: number
-): OwnablePropertyDTO {
+// TODO At calling place, check that the person owns whole block
+// and that all other properties have equal or 1 more house than current property
+export function buyHouseOnProperty(property: OwnablePropertyDTO): OwnablePropertyDTO {
     if (property.numHouses >= 5) return property;
 
     const numHouses = property.numHouses + 1;
-    const rent = calculateRent(baseRent, numHouses, hasWholeBlock);
+    const rent = property.baseRent * (1 + numHouses);
+
     return { ...property, numHouses, rent };
-}
-
-function calculateRent(baseRent: number, numHouses: number, hasWholeBlock: boolean): number {
-    if (hasWholeBlock && numHouses == 0) {
-        return 2 * baseRent;
-    }
-
-    return baseRent * (1 + numHouses);
 }
