@@ -13,8 +13,8 @@ export interface OwnablePropertyConfig {
     name: string;
     type: PropertyTypeValue;
     blockId: number;
-    /** Weighting used to derive baseRent from the game's marketCap setting */
-    baseRentWeighting: number;
+    /** Base rent charged when no houses are built */
+    baseRent: number;
 }
 
 /**
@@ -51,20 +51,29 @@ export function isOwnableProperty(p: object): p is OwnableProperty {
 export function buyOwnableProperty(
     property: OwnablePropertyDTO,
     playerId: number,
-    marketCap: number,
-    baseRentWeighting: number
+    baseRent: number,
+    hasWholeBlock: boolean
 ): OwnablePropertyDTO {
-    const baseRent = marketCap * (baseRentWeighting / 100);
-    return { ...property, owner: playerId, baseRent, rent: baseRent };
+    const rent = calculateRent(baseRent, 0, hasWholeBlock);
+    return { ...property, owner: playerId, baseRent, rent };
 }
 
-export function buyHouse(
+export function buyHouseOnProperty(
     property: OwnablePropertyDTO,
     hasWholeBlock: boolean,
     baseRent: number
 ): OwnablePropertyDTO {
     if (property.numHouses >= 5) return property;
+
     const numHouses = property.numHouses + 1;
-    const rent = baseRent * numHouses * (hasWholeBlock ? 2 : 1);
+    const rent = calculateRent(baseRent, numHouses, hasWholeBlock);
     return { ...property, numHouses, rent };
+}
+
+function calculateRent(baseRent: number, numHouses: number, hasWholeBlock: boolean): number {
+    if (hasWholeBlock && numHouses == 0) {
+        return 2 * baseRent;
+    }
+
+    return baseRent * (1 + numHouses);
 }

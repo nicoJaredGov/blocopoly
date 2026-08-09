@@ -33,9 +33,9 @@ function owned(
     name: string,
     type: OwnablePropertyConfig["type"],
     blockId: number,
-    baseRentWeighting: number
+    baseRent: number
 ): OwnablePropertyConfig {
-    return { row, col, position, name, type, blockId, baseRentWeighting };
+    return { row, col, position, name, type, blockId, baseRent };
 }
 
 export const customProperties: (Property | OwnablePropertyConfig)[] = [

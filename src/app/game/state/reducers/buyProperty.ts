@@ -1,21 +1,20 @@
 import { GameStateDTO } from "../GameState";
 import { buyOwnableProperty } from "../../property/OwnableProperty";
+import { updateOwnedProperty } from "../utils";
 
+//TODO: Add check for if the player balance is enough to buy where this function is called
 export function buyProperty(
     state: GameStateDTO,
-    playerId: number,
-    propertyPosition: number,
-    marketCap: number,
-    baseRentWeighting: number
+    payload: {
+        playerId: number;
+        propertyPosition: number;
+        baseRent: number;
+        hasWholeBlock: boolean;
+    }
 ): GameStateDTO {
+    const { playerId, propertyPosition, baseRent, hasWholeBlock } = payload;
     const property = state.ownedProperties[propertyPosition];
-    const ownedProperty = buyOwnableProperty(property, playerId, marketCap, baseRentWeighting);
+    const ownedProperty = buyOwnableProperty(property, playerId, baseRent, hasWholeBlock);
 
-    return {
-        ...state,
-        ownedProperties: {
-            ...state.ownedProperties,
-            [property.position]: ownedProperty
-        }
-    };
+    return updateOwnedProperty(state, ownedProperty);
 }
