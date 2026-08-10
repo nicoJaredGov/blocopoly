@@ -62,8 +62,6 @@ export function buyOwnableProperty(
     return { ...property, owner: playerId, baseRent, rent };
 }
 
-// TODO At calling place, check that the person owns whole block
-// and that all other properties have equal or 1 more house than current property
 export function buyHouseOnProperty(property: OwnablePropertyDTO): OwnablePropertyDTO {
     if (property.numHouses >= 5) return property;
 
