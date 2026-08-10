@@ -3,9 +3,7 @@ import { Stage } from "./Stage";
 import { Trade } from "../trades/Trade";
 import { OwnablePropertyDTO } from "../property/OwnableProperty";
 import { GameStateAction } from "./GameStateAction";
-import { rollDice, endTurn } from "./reducers";
-import { buyProperty } from "./reducers/buyProperty";
-import { buyHouse } from "./reducers/buyHouse";
+import { rollDice, endTurn, buyHouse, buyProperty } from "./reducers";
 
 /**
  * Serialized game state — only mutable data sent over the wire.

@@ -1,7 +1,7 @@
-import { GameStateDTO } from "../GameState";
-import { buyHouseOnProperty } from "../../property/OwnableProperty";
-import { updateOwnedProperty } from "../utils";
-import { getBlockPositions, getOwnableConfig } from "../../board/board_configs/boardConfig";
+import { GameStateDTO } from "../../GameState";
+import { buyHouseOnProperty } from "../../../property/OwnableProperty";
+import { getPlayerBalance, updatedPropertyAndPlayer } from "../../utils";
+import { getBlockPositions, getOwnableConfig } from "../../../board/board_configs/boardConfig";
 
 export function buyHouse(state: GameStateDTO, propertyPosition: number): GameStateDTO {
     const config = getOwnableConfig(propertyPosition);
@@ -9,8 +9,8 @@ export function buyHouse(state: GameStateDTO, propertyPosition: number): GameSta
 
     // Check if player can afford the house
     const playerId = state.activePlayer;
-    const balance = state.players[playerId].balance;
-    if (balance < config.cost) return state;
+    const balance = getPlayerBalance(state, playerId);
+    if (balance < config.cost) return state; // TODO need to figure out house costing
 
     // Check if other properties in block have enough houses (>= current property)
     const existing = state.ownedProperties[propertyPosition];
@@ -21,6 +21,9 @@ export function buyHouse(state: GameStateDTO, propertyPosition: number): GameSta
     );
     if (!hasEnoughHouses) return state;
 
+    const player = { ...state.players[playerId] };
+    player.balance -= config.cost;
     const updated = buyHouseOnProperty(existing);
-    return updateOwnedProperty(state, updated);
+
+    return updatedPropertyAndPlayer(state, updated, player);
 }

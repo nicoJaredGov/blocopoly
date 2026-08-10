@@ -40,6 +40,27 @@ export function updateOwnedProperty(
 }
 
 /**
+ * Returns a new state with a single player and single property record updated.
+ */
+export function updatedPropertyAndPlayer(
+    state: GameStateDTO,
+    property: OwnablePropertyDTO,
+    player: PlayerDTO
+): GameStateDTO {
+    return {
+        ...state,
+        players: {
+            ...state.players,
+            [player.id]: player
+        },
+        ownedProperties: {
+            ...state.ownedProperties,
+            [property.position]: property
+        }
+    };
+}
+
+/**
  * Returns all owned properties belonging to a given player.
  * Use this instead of a propertiesOwned array on PlayerDTO.
  */
@@ -48,4 +69,11 @@ export function getPropertiesOwnedByPlayer(
     playerId: number
 ): OwnablePropertyDTO[] {
     return Object.values(state.ownedProperties).filter((p) => p.owner === playerId);
+}
+
+/**
+ * Returns player's balance from state.
+ */
+export function getPlayerBalance(state: GameStateDTO, playerId: number): number {
+    return state.players[playerId].balance;
 }
