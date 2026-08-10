@@ -1,6 +1,4 @@
 import { GameStateDTO } from "../../GameState";
-import { buyHouseOnProperty } from "../../../property/OwnableProperty";
-import { updateOwnedProperty } from "../../utils";
 import { getBlockPositions, getOwnableConfig } from "@/app/game/board/board_configs/boardConfig";
 
 export function sellProperty(
@@ -12,14 +10,21 @@ export function sellProperty(
     const config = getOwnableConfig(propertyPosition);
     if (!config) return state;
 
-    // Check if player now owns the whole block
+    // Check if there are no houses on whole block
     const blockPositions = getBlockPositions(propertyPosition);
-    const hasWholeBlock = blockPositions.every(
-        (pos) => pos === propertyPosition || state.ownedProperties[pos]?.owner === playerId
-    );
+    const hasSomeHouses = blockPositions.some((pos) => state.ownedProperties[pos]?.numHouses > 0);
+    if (hasSomeHouses) return state;
 
-    const property = state.ownedProperties[propertyPosition];
-    const updatedProperty = buyHouseOnProperty(property);
+    const player = { ...state.players[playerId] };
+    player.balance += config.cost;
+    const { [propertyPosition]: _, ...remainingProperties } = state.ownedProperties;
 
-    return updateOwnedProperty(state, updatedProperty);
+    return {
+        ...state,
+        players: {
+            ...state.players,
+            [player.id]: player
+        },
+        ownedProperties: remainingProperties
+    };
 }

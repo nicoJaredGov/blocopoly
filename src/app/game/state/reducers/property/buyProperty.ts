@@ -12,6 +12,9 @@ export function buyProperty(
     const config = getOwnableConfig(propertyPosition);
     if (!config) return state;
 
+    // Check if property is not already owned
+    if (!!state.ownedProperties[propertyPosition]) return state;
+
     // Check if player can afford the property
     const balance = getPlayerBalance(state, playerId);
     if (balance < config.cost) return state;
@@ -24,7 +27,16 @@ export function buyProperty(
 
     const player = { ...state.players[playerId] };
     player.balance -= config.cost;
-    const existing = state.ownedProperties[propertyPosition];
+
+    const existing = state.ownedProperties[propertyPosition] ?? {
+        position: propertyPosition,
+        numHouses: 0,
+        isMortgaged: false,
+        owner: undefined,
+        baseRent: config.baseRent,
+        rent: config.baseRent,
+        cost: config.cost
+    };
     const updated = buyOwnableProperty(existing, playerId, config.baseRent, hasWholeBlock);
 
     return updatedPropertyAndPlayer(state, updated, player);
