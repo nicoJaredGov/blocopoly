@@ -40,7 +40,7 @@ export function gameStateReducer(state: GameStateDTO, action: GameStateAction): 
         case "BUY_PROPERTY":
             return buyProperty(state, action.payload);
         case "BUY_HOUSE":
-            return buyHouse(state, action.payload);
+            return buyHouse(state, action.payload.propertyPosition);
         default:
             return state;
     }

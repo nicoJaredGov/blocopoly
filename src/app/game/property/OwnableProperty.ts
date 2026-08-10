@@ -15,6 +15,8 @@ export interface OwnablePropertyConfig {
     blockId: number;
     /** Base rent charged when no houses are built */
     baseRent: number;
+    /** Cost to buy this property */
+    cost: number;
 }
 
 /**
@@ -30,6 +32,7 @@ export interface OwnablePropertyDTO {
     owner: number | undefined;
     baseRent: number;
     rent: number;
+    cost: number;
 }
 
 /**
@@ -42,6 +45,7 @@ export interface OwnableProperty extends OwnablePropertyConfig {
     owner: number | undefined;
     baseRent: number;
     rent: number;
+    cost: number;
 }
 
 export function isOwnableProperty(p: object): p is OwnableProperty {
