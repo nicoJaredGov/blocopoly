@@ -3,15 +3,7 @@ import { Trade } from "../trades/Trade";
 export type GameStateAction =
     | { type: "ROLL_DICE" }
     | { type: "END_TURN" }
-    | {
-          type: "BUY_PROPERTY";
-          payload: {
-              playerId: number;
-              propertyPosition: number;
-              baseRent: number;
-              hasWholeBlock: boolean;
-          };
-      }
+    | { type: "BUY_PROPERTY"; payload: { playerId: number; propertyPosition: number } }
     | { type: "MORTGAGE_PROPERTY"; payload: { playerId: number; propertyPosition: number } }
     | { type: "UNMORTGAGE_PROPERTY"; payload: { playerId: number; propertyPosition: number } }
     | { type: "SELL_PROPERTY"; payload: { playerId: number; propertyPosition: number } }
