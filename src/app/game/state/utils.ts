@@ -13,34 +13,42 @@ export function getActivePlayer(state: GameStateDTO): PlayerDTO {
 /**
  * Returns a new state with a single player's record updated.
  */
-export function updatePlayer(state: GameStateDTO, player: PlayerDTO): GameStateDTO {
+export function addOrUpdatePlayer(
+    state: GameStateDTO,
+    player: PlayerDTO
+): Record<number, PlayerDTO> {
     return {
-        ...state,
-        players: {
-            ...state.players,
-            [player.id]: player
-        }
+        ...state.players,
+        [player.id]: player
     };
 }
 
 /**
- * Returns a new state with a single owned property record updated.
+ * Returns an updated record of owned properties with a single property added.
  */
-export function updateOwnedProperty(
+export function addOrUpdateOwnedProperty(
     state: GameStateDTO,
     property: OwnablePropertyDTO
-): GameStateDTO {
+): Record<number, OwnablePropertyDTO> {
     return {
-        ...state,
-        ownedProperties: {
-            ...state.ownedProperties,
-            [property.position]: property
-        }
+        ...state.ownedProperties,
+        [property.position]: property
     };
 }
 
 /**
- * Returns a new state with a single player and single property record updated.
+ * Returns an updated record of owned properties with a single property removed.
+ */
+export function removeOwnedProperty(
+    state: GameStateDTO,
+    propertyPosition: number
+): Record<number, OwnablePropertyDTO> {
+    const { [propertyPosition]: _, ...remainingProperties } = state.ownedProperties;
+    return remainingProperties;
+}
+
+/**
+ * Returns a new state with a single player's record updated.
  */
 export function updatedPropertyAndPlayer(
     state: GameStateDTO,
@@ -49,14 +57,8 @@ export function updatedPropertyAndPlayer(
 ): GameStateDTO {
     return {
         ...state,
-        players: {
-            ...state.players,
-            [player.id]: player
-        },
-        ownedProperties: {
-            ...state.ownedProperties,
-            [property.position]: property
-        }
+        players: addOrUpdatePlayer(state, player),
+        ownedProperties: addOrUpdateOwnedProperty(state, property)
     };
 }
 
@@ -69,6 +71,32 @@ export function getPropertiesOwnedByPlayer(
     playerId: number
 ): OwnablePropertyDTO[] {
     return Object.values(state.ownedProperties).filter((p) => p.owner === playerId);
+}
+
+/**
+ * Returns player updated with increased balance.
+ */
+export function increasePlayerBalance(
+    state: GameStateDTO,
+    playerId: number,
+    money: number
+): PlayerDTO {
+    const player = { ...state.players[playerId] };
+    player.balance += money;
+    return player;
+}
+
+/**
+ * Returns player updated with decreased balance.
+ */
+export function decreasePlayerBalance(
+    state: GameStateDTO,
+    playerId: number,
+    money: number
+): PlayerDTO {
+    const player = { ...state.players[playerId] };
+    player.balance -= money;
+    return player;
 }
 
 /**

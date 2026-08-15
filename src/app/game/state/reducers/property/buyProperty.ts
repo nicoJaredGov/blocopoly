@@ -1,6 +1,6 @@
 import { GameStateDTO } from "../../GameState";
 import { buyOwnableProperty } from "../../../property/OwnableProperty";
-import { getPlayerBalance, updatedPropertyAndPlayer } from "../../utils";
+import { decreasePlayerBalance, getPlayerBalance, updatedPropertyAndPlayer } from "../../utils";
 import { getOwnableConfig, getBlockPositions } from "../../../board/board_configs/boardConfig";
 
 export function buyProperty(
@@ -13,7 +13,7 @@ export function buyProperty(
     if (!config) return state;
 
     // Check if property is not already owned
-    if (!!state.ownedProperties[propertyPosition]) return state;
+    if (state.ownedProperties[propertyPosition]) return state;
 
     // Check if player can afford the property
     const balance = getPlayerBalance(state, playerId);
@@ -25,10 +25,8 @@ export function buyProperty(
         (pos) => pos === propertyPosition || state.ownedProperties[pos]?.owner === playerId
     );
 
-    const player = { ...state.players[playerId] };
-    player.balance -= config.cost;
-
-    const existing = state.ownedProperties[propertyPosition] ?? {
+    const player = decreasePlayerBalance(state, playerId, config.cost);
+    const newProperty = {
         position: propertyPosition,
         numHouses: 0,
         isMortgaged: false,
@@ -37,7 +35,7 @@ export function buyProperty(
         rent: config.baseRent,
         cost: config.cost
     };
-    const updated = buyOwnableProperty(existing, playerId, config.baseRent, hasWholeBlock);
+    const updated = buyOwnableProperty(newProperty, playerId, config.baseRent, hasWholeBlock);
 
     return updatedPropertyAndPlayer(state, updated, player);
 }

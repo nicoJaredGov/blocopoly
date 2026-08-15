@@ -1,11 +1,15 @@
 import { GameStateDTO } from "../../GameState";
 import { getBlockPositions, getOwnableConfig } from "@/app/game/board/board_configs/boardConfig";
+import { addOrUpdatePlayer, increasePlayerBalance, removeOwnedProperty } from "../../utils";
 
 export function sellProperty(
     state: GameStateDTO,
     payload: { playerId: number; propertyPosition: number }
 ): GameStateDTO {
     const { playerId, propertyPosition } = payload;
+
+    // Check that the owner is selling their own property
+    if (state.ownedProperties[propertyPosition]?.owner !== playerId) return state;
 
     const config = getOwnableConfig(propertyPosition);
     if (!config) return state;
@@ -15,16 +19,11 @@ export function sellProperty(
     const hasSomeHouses = blockPositions.some((pos) => state.ownedProperties[pos]?.numHouses > 0);
     if (hasSomeHouses) return state;
 
-    const player = { ...state.players[playerId] };
-    player.balance += config.cost;
-    const { [propertyPosition]: _, ...remainingProperties } = state.ownedProperties;
+    const player = increasePlayerBalance(state, playerId, config.cost / 2);
 
     return {
         ...state,
-        players: {
-            ...state.players,
-            [player.id]: player
-        },
-        ownedProperties: remainingProperties
+        players: addOrUpdatePlayer(state, player),
+        ownedProperties: removeOwnedProperty(state, propertyPosition)
     };
 }
