@@ -3,7 +3,7 @@ import { Stage } from "./Stage";
 import { Trade } from "../trades/Trade";
 import { OwnablePropertyDTO } from "../property/OwnableProperty";
 import { GameStateAction } from "./GameStateAction";
-import { rollDice, endTurn, buyHouse, buyProperty, sellProperty } from "./reducers";
+import { rollDice, endTurn, buyHouse, buyProperty, sellProperty, sellHouse } from "./reducers";
 
 /**
  * Serialized game state — only mutable data sent over the wire.
@@ -41,6 +41,8 @@ export function gameStateReducer(state: GameStateDTO, action: GameStateAction): 
             return buyHouse(state, action.payload.propertyPosition);
         case "SELL_PROPERTY":
             return sellProperty(state, action.payload);
+        case "SELL_HOUSE":
+            return sellHouse(state, action.payload);
         default:
             return state;
     }

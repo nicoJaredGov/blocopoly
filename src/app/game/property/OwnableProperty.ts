@@ -66,7 +66,20 @@ export function buyHouseOnProperty(property: OwnablePropertyDTO): OwnablePropert
     if (property.numHouses >= 5) return property;
 
     const numHouses = property.numHouses + 1;
-    const rent = property.baseRent * (1 + numHouses);
+    const rent = calculateRent(property.baseRent, numHouses);
 
     return { ...property, numHouses, rent };
+}
+
+export function sellHouseOnProperty(property: OwnablePropertyDTO): OwnablePropertyDTO {
+    if (property.numHouses == 0) return property;
+
+    const numHouses = property.numHouses - 1;
+    const rent = calculateRent(property.baseRent, numHouses);
+
+    return { ...property, numHouses, rent };
+}
+
+function calculateRent(baseRent: number, numHouses: number): number {
+    return baseRent * (numHouses + 1);
 }
