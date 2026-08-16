@@ -30,16 +30,20 @@ function isValidPurchase(
     if (!existing) return false;
     if (existing.owner !== state.activePlayer) return false;
 
-    const blockPositions = getBlockPositions(propertyPosition);
+    // Validate player can afford house
     const balance = getPlayerBalance(state, state.activePlayer);
+    if (balance < cost) return false; // TODO need to figure out house pricing
 
-    const playerCanAfford = balance >= cost; // TODO need to figure out house pricing
-    const hasMaxHouses = existing.numHouses === 5;
-    // Check if other properties in block have enough houses (>= current property)
+    // Must have less than maximum number of houses
+    if (existing.numHouses === 5) return false;
+
+    // Must have an even number of houses across block (>= current property)
+    const blockPositions = getBlockPositions(propertyPosition);
     const hasEvenlySpreadHouses = blockPositions.every(
         (pos) =>
             pos === propertyPosition || state.ownedProperties[pos]?.numHouses >= existing.numHouses
     );
+    if (!hasEvenlySpreadHouses) return false;
 
-    return playerCanAfford && !hasMaxHouses && hasEvenlySpreadHouses;
+    return true;
 }

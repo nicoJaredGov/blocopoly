@@ -1,7 +1,8 @@
 import { GameStateDTO } from "../../GameState";
+import { Trade } from "../../../trades/Trade";
 import { buyOwnableProperty, OwnablePropertyDTO } from "../../../property/OwnableProperty";
 import { getBlockPositions, getOwnableConfig } from "../../../board/board_configs/boardConfig";
-import { getPlayerBalance } from "../../utils";
+import { isValidTradeTerms } from "./tradeValidation";
 
 /**
  * Transfers a property to a new owner and recalculates its rent based on
@@ -32,7 +33,6 @@ function recalculateBlockRents(
     ownedProperties: Record<number, OwnablePropertyDTO>,
     affectedPositions: number[]
 ): Record<number, OwnablePropertyDTO> {
-    // Collect all block positions that need to be reprocessed
     const positionsToRecalculate = new Set<number>();
     for (const pos of affectedPositions) {
         for (const blockPos of getBlockPositions(pos)) {
@@ -60,35 +60,23 @@ function recalculateBlockRents(
     return updated;
 }
 
-export function acceptTrade(
-    state: GameStateDTO,
-    payload: { tradeId: number }
-): GameStateDTO {
+export function acceptTrade(state: GameStateDTO, payload: { tradeId: number }): GameStateDTO {
     const { tradeId } = payload;
 
     const trade = state.trades.find((t) => t.id === tradeId);
-    if (!trade) return state;
+    if (!isValidAccept(state, trade)) return state;
 
-    const { initiator, recipient, initiatorTradeIns, initiatorCashOffer, recipientTradeIns, recipientCashOffer } = trade;
-
-    // Guard: both players must still own their offered properties
-    for (const pos of initiatorTradeIns) {
-        if (state.ownedProperties[pos]?.owner !== initiator) return state;
-    }
-    for (const pos of recipientTradeIns) {
-        if (state.ownedProperties[pos]?.owner !== recipient) return state;
-    }
-
-    // Guard: both players must have sufficient cash
-    if (initiatorCashOffer > 0 && getPlayerBalance(state, initiator) < initiatorCashOffer) {
-        return state;
-    }
-    if (recipientCashOffer > 0 && getPlayerBalance(state, recipient) < recipientCashOffer) {
-        return state;
-    }
+    // trade is guaranteed non-null past this point
+    const {
+        initiator,
+        recipient,
+        initiatorTradeIns,
+        initiatorCashOffer,
+        recipientTradeIns,
+        recipientCashOffer
+    } = trade!;
 
     // Step 1: Transfer properties — initiator's trade-ins go to recipient, and vice versa.
-    // Build the new ownedProperties map incrementally so each transfer sees the latest state.
     let ownedProperties = { ...state.ownedProperties };
 
     for (const pos of initiatorTradeIns) {
@@ -109,9 +97,10 @@ export function acceptTrade(
     ownedProperties = recalculateBlockRents(ownedProperties, allTransferred);
 
     // Step 3: Settle cash — net the two cash offers.
-    // initiator pays initiatorCashOffer to recipient; recipient pays recipientCashOffer to initiator.
-    let initiatorBalance = state.players[initiator].balance - initiatorCashOffer + recipientCashOffer;
-    let recipientBalance = state.players[recipient].balance - recipientCashOffer + initiatorCashOffer;
+    const initiatorBalance =
+        state.players[initiator].balance - initiatorCashOffer + recipientCashOffer;
+    const recipientBalance =
+        state.players[recipient].balance - recipientCashOffer + initiatorCashOffer;
 
     const players = {
         ...state.players,
@@ -123,4 +112,11 @@ export function acceptTrade(
     const trades = state.trades.filter((t) => t.id !== tradeId);
 
     return { ...state, ownedProperties, players, trades };
+}
+
+function isValidAccept(state: GameStateDTO, trade: Trade | undefined): boolean {
+    if (!trade) return false;
+
+    // Re-validate that both parties still meet the trade terms at acceptance time
+    return isValidTradeTerms(state, trade);
 }

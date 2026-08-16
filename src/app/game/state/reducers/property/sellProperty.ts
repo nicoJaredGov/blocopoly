@@ -1,4 +1,5 @@
 import { GameStateDTO } from "../../GameState";
+import { OwnablePropertyDTO } from "../../../property/OwnableProperty";
 import { getBlockPositions, getOwnableConfig } from "@/app/game/board/board_configs/boardConfig";
 import { addOrUpdatePlayer, increasePlayerBalance, removeOwnedProperty } from "../../utils";
 
@@ -7,17 +8,13 @@ export function sellProperty(
     payload: { playerId: number; propertyPosition: number }
 ): GameStateDTO {
     const { playerId, propertyPosition } = payload;
-
-    // Check that the owner is selling their own property
-    if (state.ownedProperties[propertyPosition]?.owner !== playerId) return state;
-
+    const existing = state.ownedProperties[propertyPosition];
     const config = getOwnableConfig(propertyPosition);
     if (!config) return state;
 
-    // Check if there are no houses on whole block
-    const blockPositions = getBlockPositions(propertyPosition);
-    const hasSomeHouses = blockPositions.some((pos) => state.ownedProperties[pos]?.numHouses > 0);
-    if (hasSomeHouses) return state;
+    if (!isValidSell(state, existing, playerId, propertyPosition)) {
+        return state;
+    }
 
     const player = increasePlayerBalance(state, playerId, config.cost / 2);
 
@@ -26,4 +23,22 @@ export function sellProperty(
         players: addOrUpdatePlayer(state, player),
         ownedProperties: removeOwnedProperty(state, propertyPosition)
     };
+}
+
+function isValidSell(
+    state: GameStateDTO,
+    existing: OwnablePropertyDTO | undefined,
+    playerId: number,
+    propertyPosition: number
+): boolean {
+    // Property must exist and be owned by this player
+    if (!existing) return false;
+    if (existing.owner !== playerId) return false;
+
+    // No houses may exist on any property in the block
+    const blockPositions = getBlockPositions(propertyPosition);
+    const hasSomeHouses = blockPositions.some((pos) => state.ownedProperties[pos]?.numHouses > 0);
+    if (hasSomeHouses) return false;
+
+    return true;
 }
