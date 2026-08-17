@@ -13,7 +13,8 @@ import {
     addTrade,
     editTrade,
     removeTrade,
-    acceptTrade
+    acceptTrade,
+    bankrupt
 } from "./reducers";
 
 /**
@@ -46,6 +47,8 @@ export function gameStateReducer(state: GameStateDTO, action: GameStateAction): 
             return rollDice(state);
         case "END_TURN":
             return endTurn(state);
+        case "BANKRUPT":
+            return bankrupt(state, action.payload);
         case "BUY_PROPERTY":
             return buyProperty(state, action.payload);
         case "BUY_HOUSE":
