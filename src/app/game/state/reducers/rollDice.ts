@@ -1,5 +1,5 @@
 import { GameStateDTO } from "../GameState";
-import { getActivePlayer, updatePlayer } from "../utils";
+import { addOrUpdatePlayer, getActivePlayer } from "../utils";
 
 const NUM_BOARD_POSITIONS = 40;
 const DOUBLES_LIMIT = 3;
@@ -25,7 +25,11 @@ export function rollDice(state: GameStateDTO): GameStateDTO {
             player.stage = "JAIL";
             player.doublesRolled = 0;
             player.boardPosition = JAIL_POSITION;
-            return updatePlayer(state, player);
+
+            return {
+                ...state,
+                players: addOrUpdatePlayer(state, player)
+            };
         }
 
         player.stage = "ROLL_AGAIN";
@@ -36,5 +40,10 @@ export function rollDice(state: GameStateDTO): GameStateDTO {
 
     player.boardPosition = (player.boardPosition + elapsedPositions) % NUM_BOARD_POSITIONS;
 
-    return updatePlayer(state, player);
+    // TODO Pay rent logic here
+
+    return {
+        ...state,
+        players: addOrUpdatePlayer(state, player)
+    };
 }

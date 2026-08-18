@@ -1,9 +1,9 @@
 import { GameStateDTO } from "../../GameState";
 import { getOwnableConfig } from "@/app/game/board/board_configs/boardConfig";
-import { addOrUpdatePlayer, increasePlayerBalance, removeOwnedProperty } from "../../utils";
+import { increasePlayerBalance, updatedPropertyAndPlayer } from "../../utils";
 import { isValidPropertySale } from "./saleValidation";
 
-export function sellProperty(
+export function mortgageProperty(
     state: GameStateDTO,
     payload: { playerId: number; propertyPosition: number }
 ): GameStateDTO {
@@ -17,10 +17,7 @@ export function sellProperty(
     }
 
     const player = increasePlayerBalance(state, playerId, config.cost / 2);
+    const updated = { ...existing, isMortgaged: true };
 
-    return {
-        ...state,
-        players: addOrUpdatePlayer(state, player),
-        ownedProperties: removeOwnedProperty(state, propertyPosition)
-    };
+    return updatedPropertyAndPlayer(state, updated, player);
 }

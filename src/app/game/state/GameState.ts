@@ -14,7 +14,8 @@ import {
     editTrade,
     removeTrade,
     acceptTrade,
-    bankrupt
+    bankrupt,
+    mortgageProperty
 } from "./reducers";
 
 /**
@@ -41,31 +42,29 @@ export function getInitialState(players: Record<number, PlayerDTO>): GameStateDT
     };
 }
 
+type HandlerMap = {
+    [K in GameStateAction["type"]]: (
+        state: GameStateDTO,
+        action: Extract<GameStateAction, { type: K }>
+    ) => GameStateDTO;
+};
+
+const handlers: HandlerMap = {
+    ROLL_DICE: rollDice,
+    END_TURN: endTurn,
+    BANKRUPT: (state, action) => bankrupt(state, action.payload),
+    BUY_PROPERTY: (state, action) => buyProperty(state, action.payload),
+    BUY_HOUSE: (state, action) => buyHouse(state, action.payload),
+    SELL_PROPERTY: (state, action) => sellProperty(state, action.payload),
+    SELL_HOUSE: (state, action) => sellHouse(state, action.payload),
+    ADD_TRADE: (state, action) => addTrade(state, action.payload),
+    EDIT_TRADE: (state, action) => editTrade(state, action.payload),
+    REMOVE_TRADE: (state, action) => removeTrade(state, action.payload),
+    ACCEPT_TRADE: (state, action) => acceptTrade(state, action.payload),
+    MORTGAGE_PROPERTY: (state, action) => mortgageProperty(state, action.payload)
+};
+
 export function gameStateReducer(state: GameStateDTO, action: GameStateAction): GameStateDTO {
-    switch (action.type) {
-        case "ROLL_DICE":
-            return rollDice(state);
-        case "END_TURN":
-            return endTurn(state);
-        case "BANKRUPT":
-            return bankrupt(state, action.payload);
-        case "BUY_PROPERTY":
-            return buyProperty(state, action.payload);
-        case "BUY_HOUSE":
-            return buyHouse(state, action.payload);
-        case "SELL_PROPERTY":
-            return sellProperty(state, action.payload);
-        case "SELL_HOUSE":
-            return sellHouse(state, action.payload);
-        case "ADD_TRADE":
-            return addTrade(state, action.payload);
-        case "EDIT_TRADE":
-            return editTrade(state, action.payload);
-        case "REMOVE_TRADE":
-            return removeTrade(state, action.payload);
-        case "ACCEPT_TRADE":
-            return acceptTrade(state, action.payload);
-        default:
-            return state;
-    }
+    const handler = handlers[action.type];
+    return handler ? (handler as any)(state, action) : state;
 }

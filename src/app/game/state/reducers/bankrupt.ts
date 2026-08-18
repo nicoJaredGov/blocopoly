@@ -5,6 +5,8 @@ export function bankrupt(state: GameStateDTO, payload: { playerId: number }): Ga
 
     let activePlayer = state.activePlayer;
     let players = { ...state.players };
+
+    // Advance player if active player has bankrupted
     if (state.activePlayer === playerId) {
         const nextId = (playerId + 1) % Object.keys(state.players).length;
         activePlayer = nextId;
