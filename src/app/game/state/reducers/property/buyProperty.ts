@@ -1,7 +1,8 @@
 import { GameStateDTO } from "../../GameState";
 import { buyOwnableProperty } from "../../../property/OwnableProperty";
-import { decreasePlayerBalance, getPlayerBalance, updatedPropertyAndPlayer } from "../../utils";
+import { decreasePlayerBalance, updatedPropertyAndPlayer } from "../../utils";
 import { getOwnableConfig, getBlockPositions } from "../../../board/board_configs/boardConfig";
+import { isValidPropertyPurchase } from "./purchaseValidation";
 
 export function buyProperty(
     state: GameStateDTO,
@@ -11,7 +12,7 @@ export function buyProperty(
     const config = getOwnableConfig(propertyPosition);
     if (!config) return state;
 
-    if (!isValidPurchase(state, playerId, propertyPosition, config.cost)) {
+    if (!isValidPropertyPurchase(state, playerId, propertyPosition, config.cost)) {
         return state;
     }
 
@@ -29,22 +30,6 @@ export function buyProperty(
     const updated = buyOwnableProperty(newProperty, playerId, config.baseRent, hasWholeBlock);
 
     return updatedPropertyAndPlayer(state, updated, player);
-}
-
-function isValidPurchase(
-    state: GameStateDTO,
-    playerId: number,
-    propertyPosition: number,
-    cost: number
-): boolean {
-    // Property must not already be owned
-    if (state.ownedProperties[propertyPosition]) return false;
-
-    // Player must be able to afford the property
-    const balance = getPlayerBalance(state, playerId);
-    if (balance < cost) return false;
-
-    return true;
 }
 
 function hasWholeBlockCheck(

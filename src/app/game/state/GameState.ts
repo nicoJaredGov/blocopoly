@@ -15,7 +15,8 @@ import {
     removeTrade,
     acceptTrade,
     bankrupt,
-    mortgageProperty
+    mortgageProperty,
+    unmortgageProperty
 } from "./reducers";
 
 /**
@@ -61,7 +62,8 @@ const handlers: HandlerMap = {
     EDIT_TRADE: (state, action) => editTrade(state, action.payload),
     REMOVE_TRADE: (state, action) => removeTrade(state, action.payload),
     ACCEPT_TRADE: (state, action) => acceptTrade(state, action.payload),
-    MORTGAGE_PROPERTY: (state, action) => mortgageProperty(state, action.payload)
+    MORTGAGE_PROPERTY: (state, action) => mortgageProperty(state, action.payload),
+    UNMORTGAGE_PROPERTY: (state, action) => unmortgageProperty(state, action.payload)
 };
 
 export function gameStateReducer(state: GameStateDTO, action: GameStateAction): GameStateDTO {
