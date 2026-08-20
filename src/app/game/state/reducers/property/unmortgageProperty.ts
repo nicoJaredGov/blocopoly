@@ -1,6 +1,6 @@
 import { GameStateDTO } from "../../GameState";
 import { getOwnableConfig } from "@/app/game/board/board_configs/boardConfig";
-import { decreasePlayerBalance, updatedPropertyAndPlayer } from "../../utils";
+import { decreasePlayerBalance, updatedPropertyAndPlayer } from "../utils";
 import { isValidPropertyPurchase } from "./purchaseValidation";
 
 export function unmortgageProperty(

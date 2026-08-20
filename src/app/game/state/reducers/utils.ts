@@ -1,6 +1,8 @@
-import { PlayerDTO } from "../player/Player";
-import { OwnablePropertyDTO } from "../property/OwnableProperty";
-import { GameStateDTO } from "./GameState";
+import { PlayerDTO } from "../../player/Player";
+import { OwnablePropertyDTO } from "../../property/OwnableProperty";
+import { GameStateDTO } from "../GameState";
+
+const JAIL_POSITION = 10;
 
 /**
  * Returns a clone of the current active player.
@@ -17,6 +19,23 @@ export function addOrUpdatePlayer(
     state: GameStateDTO,
     player: PlayerDTO
 ): Record<number, PlayerDTO> {
+    return {
+        ...state.players,
+        [player.id]: player
+    };
+}
+
+/**
+ * Returns new players record with single player set to jail attributes.
+ */
+export function sendPlayerToJail(
+    state: GameStateDTO,
+    player: PlayerDTO
+): Record<number, PlayerDTO> {
+    player.stage = "JAIL";
+    player.doublesRolled = 0;
+    player.boardPosition = JAIL_POSITION;
+
     return {
         ...state.players,
         [player.id]: player

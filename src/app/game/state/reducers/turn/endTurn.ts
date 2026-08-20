@@ -1,4 +1,4 @@
-import { GameStateDTO } from "../GameState";
+import { GameStateDTO } from "../../GameState";
 import { getActivePlayer } from "../utils";
 
 export function endTurn(state: GameStateDTO): GameStateDTO {

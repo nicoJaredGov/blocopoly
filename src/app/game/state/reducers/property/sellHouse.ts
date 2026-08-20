@@ -1,6 +1,6 @@
 import { GameStateDTO } from "../../GameState";
 import { OwnablePropertyDTO, sellHouseOnProperty } from "../../../property/OwnableProperty";
-import { increasePlayerBalance, updatedPropertyAndPlayer } from "../../utils";
+import { increasePlayerBalance, updatedPropertyAndPlayer } from "../utils";
 import { getBlockPositions, getOwnableConfig } from "../../../board/board_configs/boardConfig";
 
 export function sellHouse(

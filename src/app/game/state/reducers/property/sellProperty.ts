@@ -1,6 +1,6 @@
 import { GameStateDTO } from "../../GameState";
 import { getOwnableConfig } from "@/app/game/board/board_configs/boardConfig";
-import { addOrUpdatePlayer, increasePlayerBalance, removeOwnedProperty } from "../../utils";
+import { addOrUpdatePlayer, increasePlayerBalance, removeOwnedProperty } from "../utils";
 import { isValidPropertySale } from "./saleValidation";
 
 export function sellProperty(

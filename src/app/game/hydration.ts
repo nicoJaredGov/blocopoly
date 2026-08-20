@@ -1,46 +1,11 @@
-import { PlayerDTO, Player } from "../player/Player";
+import { PlayerDTO, Player, PlayerConfig } from "./player/Player";
 import {
     OwnablePropertyConfig,
     OwnablePropertyDTO,
     OwnableProperty
-} from "../property/OwnableProperty";
-import { Property } from "../property/Property";
-import { Trade } from "../trades/Trade";
-import { Stage } from "./Stage";
-import { GameStateDTO } from "./GameState";
-
-/**
- * Client-side view of the full game — combines lean serialized state with
- * static board config so UI components have everything in one place.
- */
-export interface GameState {
-    /** The player who is playing their turn now. */
-    activePlayer: number;
-    /** The current player on this client device. */
-    currentPlayer: number;
-    players: Record<number, Player>;
-    /**
-     * Full board — static Property/OwnablePropertyConfig cells hydrated with
-     * mutable OwnablePropertyDTO state where available.
-     */
-    board: (Property | OwnableProperty)[];
-    trades: Trade[];
-    stage: Stage;
-}
-
-// ---------------------------------------------------------------------------
-// Static config shapes — provided once at session start from board/lobby data
-// ---------------------------------------------------------------------------
-
-/**
- * Static display config for a player, provided at session start (lobby/game setup).
- * isHost is on PlayerDTO since the server needs it for authority checks.
- */
-export type PlayerConfig = Pick<Player, "id" | "name" | "piece" | "colour">;
-
-// ---------------------------------------------------------------------------
-// Hydration functions
-// ---------------------------------------------------------------------------
+} from "./property/OwnableProperty";
+import { Property } from "./property/Property";
+import { GameState, GameStateDTO } from "./state/GameState";
 
 /**
  * Merges mutable PlayerDTO state with static PlayerConfig to produce a Player view model.

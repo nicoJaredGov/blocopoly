@@ -1,4 +1,4 @@
-import { GameStateDTO } from "../GameState";
+import { GameStateDTO } from "../../GameState";
 
 export function bankrupt(state: GameStateDTO, payload: { playerId: number }): GameStateDTO {
     const { playerId } = payload;

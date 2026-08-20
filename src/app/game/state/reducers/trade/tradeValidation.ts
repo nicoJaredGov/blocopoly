@@ -1,6 +1,6 @@
 import { GameStateDTO } from "../../GameState";
 import { Trade } from "../../../trades/Trade";
-import { getPlayerBalance } from "../../utils";
+import { getPlayerBalance } from "../utils";
 import { getBlockPositions } from "../../../board/board_configs/boardConfig";
 
 /**

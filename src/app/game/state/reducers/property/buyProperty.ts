@@ -1,6 +1,6 @@
 import { GameStateDTO } from "../../GameState";
 import { buyOwnableProperty } from "../../../property/OwnableProperty";
-import { decreasePlayerBalance, updatedPropertyAndPlayer } from "../../utils";
+import { decreasePlayerBalance, updatedPropertyAndPlayer } from "../utils";
 import { getOwnableConfig, getBlockPositions } from "../../../board/board_configs/boardConfig";
 import { isValidPropertyPurchase } from "./purchaseValidation";
 

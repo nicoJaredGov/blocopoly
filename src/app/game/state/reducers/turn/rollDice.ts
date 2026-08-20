@@ -1,9 +1,10 @@
-import { GameStateDTO } from "../GameState";
-import { addOrUpdatePlayer, getActivePlayer } from "../utils";
+import { GameStateDTO } from "../../GameState";
+import { addOrUpdatePlayer, getActivePlayer, sendPlayerToJail } from "../utils";
 
 const NUM_BOARD_POSITIONS = 40;
 const DOUBLES_LIMIT = 3;
-const JAIL_POSITION = 10;
+const GO_TO_JAIL = 20;
+const VACATION = 30;
 
 type D6Result = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -22,13 +23,9 @@ export function rollDice(state: GameStateDTO): GameStateDTO {
         player.doublesRolled += 1;
 
         if (player.doublesRolled === DOUBLES_LIMIT) {
-            player.stage = "JAIL";
-            player.doublesRolled = 0;
-            player.boardPosition = JAIL_POSITION;
-
             return {
                 ...state,
-                players: addOrUpdatePlayer(state, player)
+                players: sendPlayerToJail(state, player)
             };
         }
 
@@ -40,7 +37,10 @@ export function rollDice(state: GameStateDTO): GameStateDTO {
 
     player.boardPosition = (player.boardPosition + elapsedPositions) % NUM_BOARD_POSITIONS;
 
-    // TODO Pay rent logic here
+    // TODO Logic for where you land here - unowned property, owned, go-to-jail, vacation, surprise/community chest
+    switch (player.boardPosition) {
+        case GO_TO_JAIL:
+    }
 
     return {
         ...state,

@@ -3,6 +3,6 @@ export type PlayerStage =
     | "ROLL_AGAIN"
     | "END_TURN"
     | "WAITING"
-    | "BANKRUPT"
+    | "NEGATIVE_BALANCE"
     | "JAIL"
     | "VACATION";

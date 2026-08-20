@@ -1,6 +1,6 @@
 import { GameStateDTO } from "../../GameState";
 import { buyHouseOnProperty, OwnablePropertyDTO } from "../../../property/OwnableProperty";
-import { decreasePlayerBalance, getPlayerBalance, updatedPropertyAndPlayer } from "../../utils";
+import { decreasePlayerBalance, getPlayerBalance, updatedPropertyAndPlayer } from "../utils";
 import { getBlockPositions, getOwnableConfig } from "../../../board/board_configs/boardConfig";
 
 export function buyHouse(state: GameStateDTO, payload: { propertyPosition: number }): GameStateDTO {

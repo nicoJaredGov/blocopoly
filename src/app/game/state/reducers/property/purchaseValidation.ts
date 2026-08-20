@@ -1,5 +1,5 @@
 import { GameStateDTO } from "../../GameState";
-import { getPlayerBalance } from "../../utils";
+import { getPlayerBalance } from "../utils";
 
 /**
  * Validates the purchase (or unmortgage) of a property.
