@@ -12,6 +12,13 @@ function rollD6(): D6Result {
     return (Math.floor(Math.random() * 6) + 1) as D6Result;
 }
 
+function sendToJail(state: GameStateDTO, player: PlayerDTO): GameStateDTO {
+    return {
+        ...state,
+        players: addOrUpdatePlayer(state, sendPlayerToJail(player))
+    };
+}
+
 function collectVacationMoney(state: GameStateDTO, player: PlayerDTO): GameStateDTO {
     player.isOnVacation = true;
     player.balance += state.vacationBalance;
@@ -27,7 +34,6 @@ export function rollDice(state: GameStateDTO): GameStateDTO {
 
     if (player.isOnVacation) {
         player.isOnVacation = false;
-
         return {
             ...state,
             players: addOrUpdatePlayer(state, player)
@@ -40,14 +46,10 @@ export function rollDice(state: GameStateDTO): GameStateDTO {
 
     if (firstDice === secondDice) {
         player.doublesRolled += 1;
-        if (player.doublesRolled === DOUBLES_LIMIT) {
-            return {
-                ...state,
-                players: addOrUpdatePlayer(state, sendPlayerToJail(player))
-            };
-        }
-
         player.stage = "ROLL_AGAIN";
+        if (player.doublesRolled === DOUBLES_LIMIT) {
+            return sendToJail(state, player);
+        }
     } else {
         player.doublesRolled = 0;
         player.stage = "END_TURN";
@@ -58,10 +60,7 @@ export function rollDice(state: GameStateDTO): GameStateDTO {
     // TODO Logic for where you land here - unowned property, owned, go-to-jail, vacation, surprise/community chest
     switch (player.boardPosition) {
         case GO_TO_JAIL_POSITION:
-            return {
-                ...state,
-                players: addOrUpdatePlayer(state, sendPlayerToJail(player))
-            };
+            return sendToJail(state, player);
         case VACATION_POSITION:
             return collectVacationMoney(state, player);
     }
