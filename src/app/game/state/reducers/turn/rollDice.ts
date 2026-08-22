@@ -1,4 +1,4 @@
-import { sendPlayerToJail } from "@/app/game/player/Player";
+import { PlayerDTO, sendPlayerToJail } from "@/app/game/player/Player";
 import { GameStateDTO } from "../../GameState";
 import { addOrUpdatePlayer, getActivePlayer } from "../utils";
 import { GO_TO_JAIL_POSITION, VACATION_POSITION } from "../../../constants";
@@ -12,8 +12,27 @@ function rollD6(): D6Result {
     return (Math.floor(Math.random() * 6) + 1) as D6Result;
 }
 
+function collectVacationMoney(state: GameStateDTO, player: PlayerDTO): GameStateDTO {
+    player.isOnVacation = true;
+    player.balance += state.vacationBalance;
+    return {
+        ...state,
+        players: addOrUpdatePlayer(state, player),
+        vacationBalance: 0
+    };
+}
+
 export function rollDice(state: GameStateDTO): GameStateDTO {
     const player = getActivePlayer(state);
+
+    if (player.isOnVacation) {
+        player.isOnVacation = false;
+
+        return {
+            ...state,
+            players: addOrUpdatePlayer(state, player)
+        };
+    }
 
     const firstDice = rollD6();
     const secondDice = rollD6();
@@ -43,6 +62,8 @@ export function rollDice(state: GameStateDTO): GameStateDTO {
                 ...state,
                 players: addOrUpdatePlayer(state, sendPlayerToJail(player))
             };
+        case VACATION_POSITION:
+            return collectVacationMoney(state, player);
     }
 
     return {

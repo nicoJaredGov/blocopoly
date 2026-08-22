@@ -9,7 +9,7 @@ import { Property } from "../property/Property";
  * The board is not included here; it is static config held client-side.
  */
 export interface GameStateDTO {
-    /** The player who is playing their turn now. */
+    /** The player who is playing their turn now */
     activePlayer: number;
     /** Mutable player state keyed by player id */
     players: Record<number, PlayerDTO>;
@@ -17,6 +17,10 @@ export interface GameStateDTO {
     ownedProperties: Record<number, OwnablePropertyDTO>;
     trades: Trade[];
     stage: Stage;
+    /** Money placed in the middle of the board.
+     * Collected by a player who lands on vacation spot
+     */
+    vacationBalance: number;
 }
 
 /**

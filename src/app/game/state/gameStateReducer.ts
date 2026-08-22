@@ -24,7 +24,8 @@ export function getInitialState(players: Record<number, PlayerDTO>): GameStateDT
         players,
         ownedProperties: {},
         trades: [],
-        stage: "NORMAL"
+        stage: "NORMAL",
+        vacationBalance: 0
     };
 }
 
