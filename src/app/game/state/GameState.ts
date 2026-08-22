@@ -9,6 +9,7 @@ import { Property } from "../property/Property";
  * The board is not included here; it is static config held client-side.
  */
 export interface GameStateDTO {
+    /** The player who is playing their turn now. */
     activePlayer: number;
     /** Mutable player state keyed by player id */
     players: Record<number, PlayerDTO>;
@@ -22,17 +23,12 @@ export interface GameStateDTO {
  * Client-side view of the full game — combines lean serialized state with
  * static board config so UI components have everything in one place.
  */
-export interface GameState {
-    /** The player who is playing their turn now. */
-    activePlayer: number;
+export interface GameState extends GameStateDTO {
     /** The current player on this client device. */
     currentPlayer: number;
-    players: Record<number, Player>;
     /**
      * Full board — static Property/OwnablePropertyConfig cells hydrated with
      * mutable OwnablePropertyDTO state where available.
      */
     board: (Property | OwnableProperty)[];
-    trades: Trade[];
-    stage: Stage;
 }

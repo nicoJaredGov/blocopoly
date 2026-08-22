@@ -1,10 +1,10 @@
+import { sendPlayerToJail } from "@/app/game/player/Player";
 import { GameStateDTO } from "../../GameState";
-import { addOrUpdatePlayer, getActivePlayer, sendPlayerToJail } from "../utils";
+import { addOrUpdatePlayer, getActivePlayer } from "../utils";
+import { GO_TO_JAIL_POSITION, VACATION_POSITION } from "../../../constants";
 
 const NUM_BOARD_POSITIONS = 40;
 const DOUBLES_LIMIT = 3;
-const GO_TO_JAIL = 20;
-const VACATION = 30;
 
 type D6Result = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -21,11 +21,10 @@ export function rollDice(state: GameStateDTO): GameStateDTO {
 
     if (firstDice === secondDice) {
         player.doublesRolled += 1;
-
         if (player.doublesRolled === DOUBLES_LIMIT) {
             return {
                 ...state,
-                players: sendPlayerToJail(state, player)
+                players: addOrUpdatePlayer(state, sendPlayerToJail(player))
             };
         }
 
@@ -39,7 +38,11 @@ export function rollDice(state: GameStateDTO): GameStateDTO {
 
     // TODO Logic for where you land here - unowned property, owned, go-to-jail, vacation, surprise/community chest
     switch (player.boardPosition) {
-        case GO_TO_JAIL:
+        case GO_TO_JAIL_POSITION:
+            return {
+                ...state,
+                players: addOrUpdatePlayer(state, sendPlayerToJail(player))
+            };
     }
 
     return {
