@@ -1,22 +1,25 @@
 import { GameStateDTO } from "../../GameState";
+import { getNextAvailablePlayer } from "../utils";
 
 export function bankrupt(state: GameStateDTO, payload: { playerId: number }): GameStateDTO {
     const { playerId } = payload;
 
     let activePlayer = state.activePlayer;
-    let players = { ...state.players };
+    let players = state.players;
+    players = {
+        ...state.players,
+        [playerId]: { ...state.players[playerId], stage: "BANKRUPT" }
+    };
 
     // Advance player if active player has bankrupted
     if (state.activePlayer === playerId) {
-        const nextId = (playerId + 1) % Object.keys(state.players).length;
+        const nextId = getNextAvailablePlayer(state);
         activePlayer = nextId;
         players = {
             ...players,
             [nextId]: { ...players[nextId], stage: "ROLL_DICE" }
         };
     }
-
-    const { [playerId]: _, ...remainingPlayers } = players;
 
     const trades = state.trades.filter((t) => t.initiator !== playerId && t.recipient !== playerId);
     const ownedProperties = Object.fromEntries(
@@ -25,7 +28,7 @@ export function bankrupt(state: GameStateDTO, payload: { playerId: number }): Ga
 
     return {
         ...state,
-        players: remainingPlayers,
+        players,
         ownedProperties,
         activePlayer,
         trades

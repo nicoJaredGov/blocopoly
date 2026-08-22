@@ -1,10 +1,10 @@
 import { GameStateDTO } from "../../GameState";
-import { getActivePlayer } from "../utils";
+import { getActivePlayer, getNextAvailablePlayer } from "../utils";
 
 export function endTurn(state: GameStateDTO): GameStateDTO {
     const player = getActivePlayer(state);
     player.stage = "WAITING";
-    const nextId = (player.id + 1) % Object.keys(state.players).length;
+    const nextId = getNextAvailablePlayer(state);
 
     return {
         ...state,
