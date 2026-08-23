@@ -10,7 +10,7 @@ import React, { useReducer } from "react";
 // Temporary: initialise with no players for local dev rendering.
 // In production, state arrives from the WebSocket server and playerConfigs
 // are provided by the lobby/session setup.
-const devInitialState = getInitialState({});
+const devInitialState = getInitialState({}, 2000);
 
 export default function GamePage() {
     const [state, dispatch] = useReducer(gameStateReducer, devInitialState);

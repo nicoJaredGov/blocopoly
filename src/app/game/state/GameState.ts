@@ -1,4 +1,4 @@
-import { Player, PlayerDTO } from "../player/Player";
+import { PlayerDTO } from "../player/Player";
 import { Stage } from "../Stage";
 import { Trade } from "../trades/Trade";
 import { OwnableProperty, OwnablePropertyDTO } from "../property/OwnableProperty";
@@ -17,6 +17,7 @@ export interface GameStateDTO {
     ownedProperties: Record<number, OwnablePropertyDTO>;
     trades: Trade[];
     stage: Stage;
+    startSalary: number;
     /** Money placed in the middle of the board.
      * Collected by a player who lands on vacation spot
      */

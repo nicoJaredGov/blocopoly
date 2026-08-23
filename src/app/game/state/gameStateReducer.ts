@@ -18,13 +18,17 @@ import {
 } from "./reducers";
 import { GameStateDTO } from "./GameState";
 
-export function getInitialState(players: Record<number, PlayerDTO>): GameStateDTO {
+export function getInitialState(
+    players: Record<number, PlayerDTO>,
+    startSalary: number //TODO - Will come from game config - added here for mechanics where it will be adjusted dynamically in future.
+): GameStateDTO {
     return {
         activePlayer: 0,
         players,
         ownedProperties: {},
         trades: [],
         stage: "NORMAL",
+        startSalary,
         vacationBalance: 0
     };
 }

@@ -42,7 +42,7 @@ export function rollDice(state: GameStateDTO): GameStateDTO {
 
     const firstDice = rollD6();
     const secondDice = rollD6();
-    const elapsedPositions = firstDice + secondDice;
+    const elapsed = firstDice + secondDice;
 
     if (firstDice === secondDice) {
         player.doublesRolled += 1;
@@ -55,7 +55,11 @@ export function rollDice(state: GameStateDTO): GameStateDTO {
         player.stage = "END_TURN";
     }
 
-    player.boardPosition = (player.boardPosition + elapsedPositions) % NUM_BOARD_POSITIONS;
+    let elapsedPosition = (player.boardPosition + elapsed) % NUM_BOARD_POSITIONS;
+    if (elapsedPosition <= player.boardPosition) {
+        player.balance += state.startSalary;
+    }
+    player.boardPosition = elapsedPosition;
 
     // TODO Logic for where you land here - unowned property, owned, go-to-jail, vacation, surprise/community chest
     switch (player.boardPosition) {
