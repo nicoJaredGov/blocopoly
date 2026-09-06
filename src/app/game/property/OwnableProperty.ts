@@ -72,7 +72,7 @@ export function buyHouseOnProperty(property: OwnablePropertyDTO): OwnablePropert
 }
 
 export function sellHouseOnProperty(property: OwnablePropertyDTO): OwnablePropertyDTO {
-    if (property.numHouses == 0) return property;
+    if (property.numHouses === 0) return property;
 
     const numHouses = property.numHouses - 1;
     const rent = calculateRent(property.baseRent, numHouses);

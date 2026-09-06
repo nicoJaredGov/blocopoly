@@ -45,6 +45,16 @@ export function addOrUpdatePlayer(
 }
 
 /**
+ * Returns a cloned game state with the updated player state.
+ */
+export function updatePlayerState(state: GameStateDTO, player: PlayerDTO): GameStateDTO {
+    return {
+        ...state,
+        players: addOrUpdatePlayer(state, player)
+    };
+}
+
+/**
  * Returns an updated record of owned properties with a single property added.
  */
 export function addOrUpdateOwnedProperty(

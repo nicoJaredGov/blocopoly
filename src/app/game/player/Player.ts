@@ -10,7 +10,7 @@ export interface PlayerDTO {
     /** Number of Get-out-of-jail-free cards */
     numJailFreeCards: number;
     boardPosition: number;
-    /** Counts consecutive turns spent in jail (0–2); resets on release */
+    /** Counts consecutive turns spent in jail; resets on release */
     jailTurnsElapsed: number;
     /** Number of consecutive times a double has been rolled */
     doublesRolled: number;
@@ -35,7 +35,9 @@ export interface Player extends PlayerDTO {
 }
 
 /**
- * Returns a player updated with jail attributes.
+ * Mutates the player state to be in jail.
+ *
+ * @returns updated player state
  */
 export function mutatePlayerToJail(player: PlayerDTO): PlayerDTO {
     player.stage = "JAIL";
@@ -43,4 +45,22 @@ export function mutatePlayerToJail(player: PlayerDTO): PlayerDTO {
     player.boardPosition = JAIL_POSITION;
 
     return player;
+}
+
+/**
+ * Clears jail state without changing boardPosition.
+ * Caller is responsible for moving the player after release.
+ */
+export function mutateReleaseFromJail(player: PlayerDTO) {
+    player.stage = "END_TURN";
+    player.jailTurnsElapsed = 0;
+    player.doublesRolled = 0;
+}
+
+/**
+ *  Mutates the player state to be on vacation and collect the vacation money.
+ */
+export function mutatePlayerOnVacation(player: PlayerDTO, vacationBalance: number) {
+    player.stage = "VACATION";
+    player.balance += vacationBalance;
 }
