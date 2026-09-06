@@ -12,8 +12,6 @@ export interface PlayerDTO {
     boardPosition: number;
     /** Counts consecutive turns spent in jail (0–2); resets on release */
     jailTurnsElapsed: number;
-    /** The player has landed on vacation and should be skipped the next turn, then reset this */
-    isOnVacation: boolean;
     /** Number of consecutive times a double has been rolled */
     doublesRolled: number;
     stage: PlayerStage;
@@ -39,7 +37,7 @@ export interface Player extends PlayerDTO {
 /**
  * Returns a player updated with jail attributes.
  */
-export function sendPlayerToJail(player: PlayerDTO): PlayerDTO {
+export function mutatePlayerToJail(player: PlayerDTO): PlayerDTO {
     player.stage = "JAIL";
     player.doublesRolled = 0;
     player.boardPosition = JAIL_POSITION;

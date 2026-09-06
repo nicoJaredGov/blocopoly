@@ -66,6 +66,9 @@ export function toGameStateVM(
         players,
         board,
         trades: state.trades,
-        stage: state.stage
+        stage: state.stage,
+        ownedProperties: state.ownedProperties,
+        vacationBalance: state.vacationBalance,
+        startSalary: state.startSalary
     };
 }

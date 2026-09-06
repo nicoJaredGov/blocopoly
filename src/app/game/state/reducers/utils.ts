@@ -13,13 +13,14 @@ export function getActivePlayer(state: GameStateDTO): PlayerDTO {
 /**
  * Returns the next available player in sequential order who is not bankrupt or left game.
  *
- * Assumption: players are never removed from list, only marked as bankrupt or left game.
+ * Assumption 1: Player Ids are 0-indexed and contiguous.
+ * Assumption 2: Players are never removed from list, only marked as bankrupt or left game.
  */
 export function getNextAvailablePlayer(state: GameStateDTO): number {
     let nextId = state.activePlayer;
     const totalPlayers = Object.keys(state.players).length;
 
-    for (let _ in Object.keys(state.players)) {
+    for (let i = 0; i < totalPlayers; i++) {
         nextId = (nextId + 1) % totalPlayers;
         if (!["BANKRUPT", "LEFT_GAME"].includes(state.players[nextId].stage)) {
             return nextId;

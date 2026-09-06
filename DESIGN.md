@@ -104,6 +104,13 @@ Next.js App Router. Routes so far:
 
 All game UI is a `"use client"` subtree.
 
+## Coding Conventions
+
+- **Strict equality** — always use `===` and `!==`. Never use loose equality (`==`, `!=`).
+- **Mutating functions** — functions that mutate their arguments must be prefixed with `mutate` (e.g. `mutatePlayerToJail`). Functions without this prefix are expected to be pure/non-mutating.
+
+---
+
 ## Documented Assumptions
 
 1. For many reducer actions, we're assuming that the active player is making the action so pull the player Id from `state.activePlayer` instead of passing the player Id through the payload. An example of this is the action **BUY_HOUSE**. The client needs to ensure and reinforce that only the active player can perform these actions to conform to the game rules, otherwise correct state updates and behaviour are not guaranteed.

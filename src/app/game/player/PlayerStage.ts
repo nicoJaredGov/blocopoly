@@ -5,6 +5,6 @@ export type PlayerStage =
     | "WAITING"
     | "NEGATIVE_BALANCE"
     | "JAIL"
+    | "VACATION"
     | "BANKRUPT"
-    | "LEFT_GAME"
-    | "VACATION";
+    | "LEFT_GAME";
