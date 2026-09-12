@@ -1,5 +1,6 @@
 import { GameStateDTO } from "../../GameState";
-import { getOwnableConfig } from "@/app/game/board/board_configs/boardConfig";
+import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
+import { getOwnableConfig } from "@/app/setup/BoardConfig";
 import { increasePlayerBalance, updatedPropertyAndPlayer } from "../utils";
 import { isValidPropertySale } from "./saleValidation";
 
@@ -9,7 +10,7 @@ export function mortgageProperty(
 ): GameStateDTO {
     const { playerId, propertyPosition } = payload;
     const existing = state.ownedProperties[propertyPosition];
-    const config = getOwnableConfig(propertyPosition);
+    const config = getOwnableConfig(boardConfig, propertyPosition);
     if (!config) return state;
 
     if (!isValidPropertySale(state, existing, playerId, propertyPosition)) {

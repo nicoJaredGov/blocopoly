@@ -1,6 +1,7 @@
 import { GameStateDTO } from "../../GameState";
 import { buyOwnableProperty, OwnablePropertyDTO } from "../../../property/OwnableProperty";
-import { getBlockPositions, getOwnableConfig } from "../../../board/board_configs/boardConfig";
+import { boardConfig } from "../../../board/board_configs/boardAccessor";
+import { getBlockPositions, getOwnableConfig } from "@/app/setup/BoardConfig";
 
 /**
  * Transfers a property to a new owner and recalculates the whole-block rent bonus.
@@ -13,10 +14,10 @@ function transferProperty(
     newOwnerId: number
 ): OwnablePropertyDTO {
     const property = ownedProperties[position];
-    const config = getOwnableConfig(position);
+    const config = getOwnableConfig(boardConfig, position);
     if (!property || !config) return property;
 
-    const blockPositions = getBlockPositions(position);
+    const blockPositions = getBlockPositions(boardConfig, position);
     const hasWholeBlock = blockPositions.every(
         (pos) => pos === position || ownedProperties[pos]?.owner === newOwnerId
     );

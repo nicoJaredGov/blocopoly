@@ -3,7 +3,7 @@
 import { Box } from "@mui/material";
 import Board from "./board/board";
 import { getInitialState, gameStateReducer } from "./state/gameStateReducer";
-import { customProperties } from "./board/board_configs/customBoard";
+import { getBoardConfig } from "@/app/setup/boards/boardRegistry";
 import { toGameStateVM } from "./hydration";
 import React, { useReducer } from "react";
 
@@ -17,7 +17,7 @@ export default function GamePage() {
 
     // Hydrate the lean server state into a full view model for the UI.
     // customProperties is the static board config loaded once at startup.
-    const vm = toGameStateVM(state, customProperties, {}, 0);
+    const vm = toGameStateVM(state, getBoardConfig("custom").properties, {}, 0);
 
     return (
         <Box

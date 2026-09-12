@@ -1,7 +1,8 @@
 import { GameStateDTO } from "../../GameState";
 import { OwnablePropertyDTO, sellHouseOnProperty } from "../../../property/OwnableProperty";
 import { increasePlayerBalance, updatedPropertyAndPlayer } from "../utils";
-import { getBlockPositions, getOwnableConfig } from "../../../board/board_configs/boardConfig";
+import { boardConfig } from "../../../board/board_configs/boardAccessor";
+import { getBlockPositions, getOwnableConfig } from "@/app/setup/BoardConfig";
 
 export function sellHouse(
     state: GameStateDTO,
@@ -9,7 +10,7 @@ export function sellHouse(
 ): GameStateDTO {
     const { playerId, propertyPosition } = payload;
     const existing = state.ownedProperties[propertyPosition];
-    const config = getOwnableConfig(propertyPosition);
+    const config = getOwnableConfig(boardConfig, propertyPosition);
     if (!config) return state;
 
     if (!isValidSell(state, existing, playerId, propertyPosition)) {
@@ -36,7 +37,7 @@ function isValidSell(
     if (existing.numHouses === 0) return false;
 
     // Must have an even number of houses across block (<= current property)
-    const blockPositions = getBlockPositions(propertyPosition);
+    const blockPositions = getBlockPositions(boardConfig, propertyPosition);
     const hasEqualHouses = blockPositions.every(
         (pos) =>
             pos === propertyPosition || state.ownedProperties[pos]?.numHouses <= existing.numHouses

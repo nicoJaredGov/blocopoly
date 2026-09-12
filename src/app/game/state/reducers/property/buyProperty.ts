@@ -1,7 +1,8 @@
 import { GameStateDTO } from "../../GameState";
 import { buyOwnableProperty } from "../../../property/OwnableProperty";
 import { decreasePlayerBalance, updatedPropertyAndPlayer } from "../utils";
-import { getOwnableConfig, getBlockPositions } from "../../../board/board_configs/boardConfig";
+import { boardConfig } from "../../../board/board_configs/boardAccessor";
+import { getBlockPositions, getOwnableConfig } from "@/app/setup/BoardConfig";
 import { isValidPropertyPurchase } from "./purchaseValidation";
 
 export function buyProperty(
@@ -9,7 +10,7 @@ export function buyProperty(
     payload: { playerId: number; propertyPosition: number }
 ): GameStateDTO {
     const { playerId, propertyPosition } = payload;
-    const config = getOwnableConfig(propertyPosition);
+    const config = getOwnableConfig(boardConfig, propertyPosition);
     if (!config) return state;
 
     if (!isValidPropertyPurchase(state, playerId, propertyPosition, config.cost)) {
@@ -37,7 +38,7 @@ function hasWholeBlockCheck(
     propertyPosition: number,
     playerId: number
 ): boolean {
-    const blockPositions = getBlockPositions(propertyPosition);
+    const blockPositions = getBlockPositions(boardConfig, propertyPosition);
     return blockPositions.every(
         (pos) => pos === propertyPosition || state.ownedProperties[pos]?.owner === playerId
     );
