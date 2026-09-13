@@ -4,7 +4,7 @@ import { addOrUpdatePlayer, getActivePlayer } from "../utils";
 export function useJailFreeCard(state: GameStateDTO): GameStateDTO {
     const player = getActivePlayer(state);
 
-    if (player.stage !== "JAIL") return state;
+    if (!player.isInJail) return state;
     if (player.numJailFreeCards === 0) return state;
 
     player.numJailFreeCards -= 1;

@@ -12,3 +12,6 @@ export const PropertyType = {
 } as const;
 
 export type PropertyTypeValue = (typeof PropertyType)[keyof typeof PropertyType];
+
+export const OwnablePropertyTypes =
+    PropertyType.RESIDENTIAL | PropertyType.AIRPORT | PropertyType.POWER | PropertyType.WATER;

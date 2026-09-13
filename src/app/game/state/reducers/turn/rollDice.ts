@@ -6,7 +6,9 @@ import {
 } from "@/app/game/player/Player";
 import { GameStateDTO } from "../../GameState";
 import { addOrUpdatePlayer, getActivePlayer, updatePlayerState } from "../utils";
-import { GO_TO_JAIL_POSITION, VACATION_POSITION } from "../../../constants";
+import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
+import { getPropertyConfig } from "@/app/setup/BoardConfig";
+import { OwnablePropertyTypes, PropertyType } from "@/app/game/property/PropertyType";
 
 const NUM_BOARD_POSITIONS = 40;
 const DOUBLES_LIMIT = 3;
@@ -31,6 +33,57 @@ function releaseAndMove(state: GameStateDTO, player: PlayerDTO, elapsed: number)
     const prevPosition = player.boardPosition;
     advancePlayer(player, elapsed);
     return resolveLanding(state, player, prevPosition, elapsed);
+}
+
+/**
+ * Applies landing-cell effects after the player's boardPosition has been updated.
+ * Handles GO_TO_JAIL, VACATION, and salary collection for passing GO.
+ * TODO: add unowned property, owned property, surprise/community chest handling.
+ */
+function resolveLanding(
+    state: GameStateDTO,
+    player: PlayerDTO,
+    prevPosition: number,
+    elapsed: number
+): GameStateDTO {
+    let updated = { ...state };
+    const propertyType = getPropertyConfig(boardConfig, player.boardPosition)?.type;
+
+    switch (propertyType) {
+        case PropertyType.GO_TO_JAIL:
+            mutatePlayerToJail(player);
+            return updatePlayerState(updated, player);
+
+        case PropertyType.VACATION:
+            mutatePlayerOnVacation(player, state.vacationBalance);
+            updated.vacationBalance = 0;
+            break;
+
+        case OwnablePropertyTypes:
+            const property = state.ownedProperties[player.boardPosition];
+            if (player.id !== property.owner) {
+                // TODO - pay rent
+            }
+            // TODO
+            break;
+
+        case PropertyType.SURPRISE:
+            // TODO
+            break;
+
+        case PropertyType.TAX:
+            // TODO
+            break;
+    }
+
+    if (shouldCollectSalary(prevPosition, elapsed)) {
+        player.balance += state.startSalary;
+    }
+
+    return {
+        ...updated,
+        players: addOrUpdatePlayer(state, player)
+    };
 }
 
 /**
@@ -67,7 +120,7 @@ function handleJailRoll(state: GameStateDTO, player: PlayerDTO): GameStateDTO {
  * The vacation turn is simply skipped; the player returns to a normal roll_dice stage.
  */
 function handleVacationRoll(state: GameStateDTO, player: PlayerDTO): GameStateDTO {
-    player.stage = "ROLL_DICE";
+    player.isOnVacation = false;
     return updatePlayerState(state, player);
 }
 
@@ -82,9 +135,10 @@ function handleNormalRoll(state: GameStateDTO, player: PlayerDTO): GameStateDTO 
     if (firstDice === secondDice) {
         player.doublesRolled += 1;
         if (player.doublesRolled === DOUBLES_LIMIT) {
+            player.stage = "WAITING";
             return updatePlayerState(state, mutatePlayerToJail(player));
         }
-        player.stage = "ROLL_AGAIN";
+        player.stage = "ROLL_DICE";
     } else {
         player.doublesRolled = 0;
         player.stage = "END_TURN";
@@ -93,45 +147,11 @@ function handleNormalRoll(state: GameStateDTO, player: PlayerDTO): GameStateDTO 
     return releaseAndMove(state, player, elapsed);
 }
 
-/**
- * Applies landing-cell effects after the player's boardPosition has been updated.
- * Handles GO_TO_JAIL, VACATION, and salary collection for passing GO.
- * TODO: add unowned property, owned property, surprise/community chest handling.
- */
-function resolveLanding(
-    state: GameStateDTO,
-    player: PlayerDTO,
-    prevPosition: number,
-    elapsed: number
-): GameStateDTO {
-    let updated = { ...state };
-
-    switch (player.boardPosition) {
-        case GO_TO_JAIL_POSITION:
-            mutatePlayerToJail(player);
-            return updatePlayerState(updated, player);
-
-        case VACATION_POSITION:
-            mutatePlayerOnVacation(player, state.vacationBalance);
-            updated.vacationBalance = 0;
-            break;
-    }
-
-    if (shouldCollectSalary(prevPosition, elapsed)) {
-        player.balance += state.startSalary;
-    }
-
-    return {
-        ...updated,
-        players: addOrUpdatePlayer(state, player)
-    };
-}
-
 export function rollDice(state: GameStateDTO): GameStateDTO {
     const player = getActivePlayer(state);
 
-    if (player.stage === "VACATION") return handleVacationRoll(state, player);
-    if (player.stage === "JAIL") return handleJailRoll(state, player);
+    if (player.isOnVacation) return handleVacationRoll(state, player);
+    if (player.isInJail) return handleJailRoll(state, player);
 
     return handleNormalRoll(state, player);
 }

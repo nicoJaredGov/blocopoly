@@ -7,6 +7,8 @@ import { PlayerStage } from "./PlayerStage";
 export interface PlayerDTO {
     id: number;
     balance: number;
+    isInJail: boolean;
+    isOnVacation: boolean;
     /** Number of Get-out-of-jail-free cards */
     numJailFreeCards: number;
     boardPosition: number;
@@ -40,7 +42,7 @@ export interface Player extends PlayerDTO {
  * @returns updated player state
  */
 export function mutatePlayerToJail(player: PlayerDTO): PlayerDTO {
-    player.stage = "JAIL";
+    player.isInJail = true;
     player.doublesRolled = 0;
     player.boardPosition = JAIL_POSITION;
 
@@ -52,7 +54,7 @@ export function mutatePlayerToJail(player: PlayerDTO): PlayerDTO {
  * Caller is responsible for moving the player after release.
  */
 export function mutateReleaseFromJail(player: PlayerDTO) {
-    player.stage = "END_TURN";
+    player.isInJail = false;
     player.jailTurnsElapsed = 0;
     player.doublesRolled = 0;
 }
@@ -61,6 +63,6 @@ export function mutateReleaseFromJail(player: PlayerDTO) {
  *  Mutates the player state to be on vacation and collect the vacation money.
  */
 export function mutatePlayerOnVacation(player: PlayerDTO, vacationBalance: number) {
-    player.stage = "VACATION";
+    player.isOnVacation = true;
     player.balance += vacationBalance;
 }
