@@ -42,6 +42,7 @@ export interface Player extends PlayerDTO {
  * @returns updated player state
  */
 export function mutatePlayerToJail(player: PlayerDTO): PlayerDTO {
+    player.stage = "WAITING";
     player.isInJail = true;
     player.doublesRolled = 0;
     player.boardPosition = JAIL_POSITION;
@@ -63,6 +64,7 @@ export function mutateReleaseFromJail(player: PlayerDTO) {
  *  Mutates the player state to be on vacation and collect the vacation money.
  */
 export function mutatePlayerOnVacation(player: PlayerDTO, vacationBalance: number) {
+    player.stage = "WAITING";
     player.isOnVacation = true;
     player.balance += vacationBalance;
 }

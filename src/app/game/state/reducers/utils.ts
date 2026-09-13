@@ -11,6 +11,13 @@ export function getActivePlayer(state: GameStateDTO): PlayerDTO {
 }
 
 /**
+ * Returns a clone of a player by provided Id.
+ */
+export function getPlayerById(state: GameStateDTO, id: number): PlayerDTO {
+    return { ...state.players[id] };
+}
+
+/**
  * Returns the next available player in sequential order who is not bankrupt or left game.
  *
  * Assumption 1: Player Ids are 0-indexed and contiguous.
@@ -51,6 +58,22 @@ export function updatePlayerState(state: GameStateDTO, player: PlayerDTO): GameS
     return {
         ...state,
         players: addOrUpdatePlayer(state, player)
+    };
+}
+
+/**
+ * Returns a cloned game state with multiple players' states updated.
+ */
+export function updateMultiplePlayerStates(
+    state: GameStateDTO,
+    players: PlayerDTO[]
+): GameStateDTO {
+    const updatedPlayers = players.reduce((acc, player) => ({ ...acc, [player.id]: player }), {
+        ...state.players
+    });
+    return {
+        ...state,
+        players: updatedPlayers
     };
 }
 

@@ -22,7 +22,7 @@ export function buyProperty(
         position: propertyPosition,
         numHouses: 0,
         isMortgaged: false,
-        owner: undefined,
+        owner: -1,
         baseRent: config.baseRent,
         rent: config.baseRent,
         cost: config.cost

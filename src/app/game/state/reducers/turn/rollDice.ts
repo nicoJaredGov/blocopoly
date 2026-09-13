@@ -5,10 +5,11 @@ import {
     mutateReleaseFromJail
 } from "@/app/game/player/Player";
 import { GameStateDTO } from "../../GameState";
-import { addOrUpdatePlayer, getActivePlayer, updatePlayerState } from "../utils";
+import { getActivePlayer, updatePlayerState } from "../utils";
 import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
 import { getPropertyConfig } from "@/app/setup/BoardConfig";
 import { OwnablePropertyTypes, PropertyType } from "@/app/game/property/PropertyType";
+import { payRent } from "./payRent";
 
 const NUM_BOARD_POSITIONS = 40;
 const DOUBLES_LIMIT = 3;
@@ -49,6 +50,10 @@ function resolveLanding(
     let updated = { ...state };
     const propertyType = getPropertyConfig(boardConfig, player.boardPosition)?.type;
 
+    if (shouldCollectSalary(prevPosition, elapsed) && propertyType !== PropertyType.GO_TO_JAIL) {
+        player.balance += state.startSalary;
+    }
+
     switch (propertyType) {
         case PropertyType.GO_TO_JAIL:
             mutatePlayerToJail(player);
@@ -61,10 +66,12 @@ function resolveLanding(
 
         case OwnablePropertyTypes:
             const property = state.ownedProperties[player.boardPosition];
-            if (player.id !== property.owner) {
-                // TODO - pay rent
+            if (!property || property.owner === -1 || property.isMortgaged) {
+                break;
             }
-            // TODO
+            if (player.id !== property.owner) {
+                return payRent(updated, player, property);
+            }
             break;
 
         case PropertyType.SURPRISE:
@@ -76,14 +83,7 @@ function resolveLanding(
             break;
     }
 
-    if (shouldCollectSalary(prevPosition, elapsed)) {
-        player.balance += state.startSalary;
-    }
-
-    return {
-        ...updated,
-        players: addOrUpdatePlayer(state, player)
-    };
+    return updatePlayerState(updated, player);
 }
 
 /**

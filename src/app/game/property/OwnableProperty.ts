@@ -28,8 +28,8 @@ export interface OwnablePropertyDTO {
     position: number;
     numHouses: number;
     isMortgaged: boolean;
-    /** Player id of the owner, or undefined if unowned */
-    owner: number | undefined;
+    /** Player id of the owner */
+    owner: number;
     baseRent: number;
     rent: number;
     cost: number;
@@ -42,7 +42,7 @@ export interface OwnablePropertyDTO {
 export interface OwnableProperty extends OwnablePropertyConfig {
     numHouses: number;
     isMortgaged: boolean;
-    owner: number | undefined;
+    owner: number;
     baseRent: number;
     rent: number;
     cost: number;
