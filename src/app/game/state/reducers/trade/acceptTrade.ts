@@ -2,6 +2,7 @@ import { GameStateDTO } from "../../GameState";
 import { buyOwnableProperty, OwnablePropertyDTO } from "../../../property/OwnableProperty";
 import { boardConfig } from "../../../board/board_configs/boardAccessor";
 import { getBlockPositions, getOwnableConfig } from "@/app/setup/BoardConfig";
+import { payRent } from "../payRent";
 
 /**
  * Transfers a property to a new owner and recalculates the whole-block rent bonus.
@@ -57,19 +58,35 @@ export function acceptTrade(state: GameStateDTO, payload: { tradeId: number }): 
     }
 
     // Step 2: Settle cash — net the two cash offers.
-    const initiatorBalance =
-        state.players[initiator].balance - initiatorCashOffer + recipientCashOffer;
-    const recipientBalance =
-        state.players[recipient].balance - recipientCashOffer + initiatorCashOffer;
+    const initiatorPlayer = { ...state.players[initiator] };
+    const recipientPlayer = { ...state.players[recipient] };
+
+    const initiatorPrevBalance = initiatorPlayer.balance;
+    const recipientPrevBalance = recipientPlayer.balance;
+    initiatorPlayer.balance = initiatorPrevBalance - initiatorCashOffer + recipientCashOffer;
+    recipientPlayer.balance = recipientPrevBalance - recipientCashOffer + initiatorCashOffer;
 
     const players = {
         ...state.players,
-        [initiator]: { ...state.players[initiator], balance: initiatorBalance },
-        [recipient]: { ...state.players[recipient], balance: recipientBalance }
+        [initiator]: initiatorPlayer,
+        [recipient]: recipientPlayer
     };
 
     // Step 3: Remove the accepted trade.
     const trades = state.trades.filter((t) => t.id !== tradeId);
 
-    return { ...state, ownedProperties, players, trades };
+    let updated: GameStateDTO = { ...state, ownedProperties, players, trades };
+
+    // Step 4: If either player was in NEGATIVE_BALANCE, apply their trade proceeds
+    // toward the outstanding rent debt.
+    if (initiatorPrevBalance < 0) {
+        const property = state.ownedProperties[initiatorPlayer.boardPosition];
+        updated = payRent(updated, initiatorPlayer, property, Math.abs(initiatorPrevBalance));
+    }
+    if (recipientPrevBalance < 0) {
+        const property = state.ownedProperties[recipientPlayer.boardPosition];
+        updated = payRent(updated, recipientPlayer, property, Math.abs(recipientPrevBalance));
+    }
+
+    return updated;
 }

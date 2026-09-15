@@ -3,6 +3,7 @@ import { OwnablePropertyDTO, sellHouseOnProperty } from "../../../property/Ownab
 import { increasePlayerBalance, updatedPropertyAndPlayer } from "../utils";
 import { boardConfig } from "../../../board/board_configs/boardAccessor";
 import { getBlockPositions, getOwnableConfig } from "@/app/setup/BoardConfig";
+import { payRent } from "../payRent";
 
 export function sellHouse(
     state: GameStateDTO,
@@ -17,10 +18,17 @@ export function sellHouse(
         return state;
     }
 
+    const prevBalance = state.players[playerId]?.balance;
     const player = increasePlayerBalance(state, playerId, config.cost / 2);
-    const updated = sellHouseOnProperty(existing);
+    const updatedProperty = sellHouseOnProperty(existing);
+    const updated = updatedPropertyAndPlayer(state, updatedProperty, player);
 
-    return updatedPropertyAndPlayer(state, updated, player);
+    if (prevBalance < 0) {
+        const property = state.ownedProperties[player.boardPosition];
+        return payRent(updated, player, property, Math.abs(prevBalance));
+    }
+
+    return updated;
 }
 
 function isValidSell(

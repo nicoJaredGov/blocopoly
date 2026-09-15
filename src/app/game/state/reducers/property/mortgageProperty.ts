@@ -3,6 +3,7 @@ import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
 import { getOwnableConfig } from "@/app/setup/BoardConfig";
 import { increasePlayerBalance, updatedPropertyAndPlayer } from "../utils";
 import { isValidPropertySale } from "./saleValidation";
+import { payRent } from "../payRent";
 
 export function mortgageProperty(
     state: GameStateDTO,
@@ -17,8 +18,15 @@ export function mortgageProperty(
         return state;
     }
 
+    const prevBalance = state.players[playerId]?.balance;
     const player = increasePlayerBalance(state, playerId, config.cost / 2);
-    const updated = { ...existing, isMortgaged: true };
+    const updatedProperty = { ...existing, isMortgaged: true };
+    const updated = updatedPropertyAndPlayer(state, updatedProperty, player);
 
-    return updatedPropertyAndPlayer(state, updated, player);
+    if (prevBalance < 0) {
+        const property = state.ownedProperties[player.boardPosition];
+        return payRent(updated, player, property, Math.abs(prevBalance));
+    }
+
+    return updated;
 }

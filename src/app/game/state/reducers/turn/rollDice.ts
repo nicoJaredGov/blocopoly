@@ -9,7 +9,7 @@ import { getActivePlayer, updatePlayerState } from "../utils";
 import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
 import { getPropertyConfig } from "@/app/setup/BoardConfig";
 import { OwnablePropertyTypes, PropertyType } from "@/app/game/property/PropertyType";
-import { payRent } from "./payRent";
+import { payRent } from "../payRent";
 
 const NUM_BOARD_POSITIONS = 40;
 const DOUBLES_LIMIT = 3;
@@ -70,7 +70,7 @@ function resolveLanding(
                 break;
             }
             if (player.id !== property.owner) {
-                return payRent(updated, player, property);
+                return payRent(updated, player, property, property.rent);
             }
             break;
 

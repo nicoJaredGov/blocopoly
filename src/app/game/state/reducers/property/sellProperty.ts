@@ -3,6 +3,7 @@ import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
 import { getOwnableConfig } from "@/app/setup/BoardConfig";
 import { addOrUpdatePlayer, increasePlayerBalance, removeOwnedProperty } from "../utils";
 import { isValidPropertySale } from "./saleValidation";
+import { payRent } from "../payRent";
 
 export function sellProperty(
     state: GameStateDTO,
@@ -17,11 +18,18 @@ export function sellProperty(
         return state;
     }
 
+    const prevBalance = state.players[playerId]?.balance;
     const player = increasePlayerBalance(state, playerId, config.cost / 2);
-
-    return {
+    const updated = {
         ...state,
         players: addOrUpdatePlayer(state, player),
         ownedProperties: removeOwnedProperty(state, propertyPosition)
     };
+
+    if (prevBalance < 0) {
+        const property = state.ownedProperties[player.boardPosition];
+        return payRent(updated, player, property, Math.abs(prevBalance));
+    }
+
+    return updated;
 }
