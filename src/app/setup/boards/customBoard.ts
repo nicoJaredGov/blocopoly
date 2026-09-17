@@ -2,6 +2,11 @@ import { PropertyType } from "@/app/game/property/PropertyType";
 import { OwnablePropertyConfig } from "@/app/game/property/OwnableProperty";
 import { Property } from "@/app/game/property/Property";
 import { BoardConfig } from "../BoardConfig";
+import { Card, CardData, CardType, CardTypeValue } from "@/app/game/cards";
+
+function card(type: CardTypeValue, data: CardData, description: string): Card {
+    return { type, data, description };
+}
 
 function prop(
     row: number,
@@ -85,5 +90,12 @@ export const customBoard: BoardConfig = {
         owned(8, 1, 37, "The Pozi", PropertyType.RESIDENTIAL, 7, 85, 170),
         prop(9, 1, 38, "Luxury Tax", PropertyType.WEALTH_TAX),
         owned(10, 1, 39, "The Sections", PropertyType.RESIDENTIAL, 7, 90, 180)
+    ],
+    chanceCards: [
+        card(CardType.PAY, { amount: 150 }, "You insurance amounts to 150"),
+        card(CardType.GO_TO_JAIL, {}, "Tax evasion is never a good option.")
+    ],
+    communityChestCards: [
+        card(CardType.EARN, { amount: 500 }, "You found a stash of money in your shoe!")
     ]
 };

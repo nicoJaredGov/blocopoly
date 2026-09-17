@@ -12,23 +12,7 @@ import { mutatePlayerToJail } from "@/app/game/player/Player";
 import { payBank } from "../payBank";
 import { GO_TO_JAIL_POSITION, NUM_BOARD_POSITIONS } from "@/app/game/constants";
 import { resolveLanding } from "./resolveLanding";
-
-/**
- * Interface for card data passed to resolvers.
- * Different card types use different fields.
- */
-export interface CardData {
-    /** Amount of money for PAY, EARN, COLLECT_FROM_EVERYONE, PAY_EVERYONE */
-    amount?: number;
-    /** Target board position for GO_TO */
-    position?: number;
-    /** Number of spaces to go back for GO_BACK */
-    spaces?: number;
-    /** Cost per house for HOUSE_REPAIRS */
-    costPerHouse?: number;
-    /** Cost per hotel for HOUSE_REPAIRS */
-    costPerHotel?: number;
-}
+import { CardData } from "@/app/game/cards/CardData";
 
 /**
  * Main resolver that dispatches to specific card type handlers.

@@ -1,6 +1,7 @@
 import { OwnablePropertyConfig } from "@/app/game/property/OwnableProperty";
 import { Property } from "@/app/game/property/Property";
 import { PropertyBlock } from "@/app/game/property/PropertyBlock";
+import { Card } from "../game/cards";
 
 /**
  * Static configuration for a board variant.
@@ -13,6 +14,10 @@ export interface BoardConfig {
     properties: (Property | OwnablePropertyConfig)[];
     /** Colour groups keyed by block id */
     propertyBlocks: Record<number, PropertyBlock>;
+    /** Community chest card deck */
+    communityChestCards: Card[];
+    /** Chance card deck */
+    chanceCards: Card[];
 }
 
 /** Look up static config for any board position. */
