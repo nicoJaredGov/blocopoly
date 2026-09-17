@@ -118,7 +118,6 @@ export function updatedPropertyAndPlayer(
 
 /**
  * Returns all owned properties belonging to a given player.
- * Use this instead of a propertiesOwned array on PlayerDTO.
  */
 export function getPropertiesOwnedByPlayer(
     state: GameStateDTO,
@@ -158,4 +157,13 @@ export function decreasePlayerBalance(
  */
 export function getPlayerBalance(state: GameStateDTO, playerId: number): number {
     return state.players[playerId].balance;
+}
+
+/**
+ * Returns all players in the game, besides the active player, who are not bankrupt or have left the game.
+ */
+export function getOtherExistingPlayers(state: GameStateDTO): PlayerDTO[] {
+    return Object.values(state.players).filter(
+        (p) => p.stage !== "BANKRUPT" && p.stage !== "LEFT_GAME" && p.id !== state.activePlayer
+    );
 }

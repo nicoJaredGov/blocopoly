@@ -5,11 +5,13 @@ import {
     updatePlayerState,
     getPlayerById,
     updateMultiplePlayerStates,
-    getPropertiesOwnedByPlayer
+    getPropertiesOwnedByPlayer,
+    getOtherExistingPlayers
 } from "../utils";
 import { mutatePlayerToJail } from "@/app/game/player/Player";
-
-const NUM_BOARD_POSITIONS = 40;
+import { payBank } from "../payBank";
+import { GO_TO_JAIL_POSITION, NUM_BOARD_POSITIONS } from "@/app/game/constants";
+import { resolveLanding } from "./resolveLanding";
 
 /**
  * Interface for card data passed to resolvers.
@@ -70,15 +72,7 @@ export function resolveCard(
  */
 function resolvePay(amount: number, state: GameStateDTO): GameStateDTO {
     const player = getActivePlayer(state);
-    player.balance -= amount;
-
-    // Add to vacation balance (money goes to middle of board)
-    const updatedState = {
-        ...state,
-        vacationBalance: state.vacationBalance + amount
-    };
-
-    return updatePlayerState(updatedState, player);
+    return payBank(state, player, amount);
 }
 
 /**
@@ -100,17 +94,14 @@ function resolveGoTo(position: number, state: GameStateDTO): GameStateDTO {
 
     player.boardPosition = position % NUM_BOARD_POSITIONS;
 
-    // Collect salary if passing GO (but not if going backwards or to jail)
-    if (
-        position > prevPosition &&
-        position !== 10 && // Not going to jail position
-        prevPosition < NUM_BOARD_POSITIONS &&
-        player.boardPosition < prevPosition
-    ) {
+    const shouldCollectSalary =
+        position !== GO_TO_JAIL_POSITION && player.boardPosition < prevPosition;
+
+    if (shouldCollectSalary) {
         player.balance += state.startSalary;
     }
 
-    return updatePlayerState(state, player);
+    return resolveLanding(state, player);
 }
 
 /**
@@ -182,15 +173,7 @@ function resolveHouseRepairs(
         }
     }
 
-    player.balance -= totalCost;
-
-    // Add to vacation balance
-    const updatedState = {
-        ...state,
-        vacationBalance: state.vacationBalance + totalCost
-    };
-
-    return updatePlayerState(updatedState, player);
+    return payBank(state, player, totalCost);
 }
 
 /**
@@ -200,40 +183,32 @@ function resolveHouseRepairs(
 function resolveGoBack(spaces: number, state: GameStateDTO): GameStateDTO {
     const player = getActivePlayer(state);
 
-    // Move backwards, wrapping around if necessary
     player.boardPosition =
         (player.boardPosition - spaces + NUM_BOARD_POSITIONS) % NUM_BOARD_POSITIONS;
 
-    return updatePlayerState(state, player);
+    return resolveLanding(state, player);
 }
 
 /**
  * PAY_EVERYONE: Active player pays the specified amount to every other player.
- * If the player cannot afford to pay everyone, they pay what they can in order.
+ * If the player cannot afford to pay everyone, their balance is split across all players
  */
 function resolvePayEveryone(amount: number, state: GameStateDTO): GameStateDTO {
     const activePlayer = getActivePlayer(state);
     const updatedPlayers = [activePlayer];
 
+    const otherExistingPlayers = getOtherExistingPlayers(state).map((p) => p.id);
+    if (otherExistingPlayers.length === 0) return state;
+
+    const allowancePerPerson = Math.round(activePlayer.balance / otherExistingPlayers.length);
+    const payment = Math.min(amount, allowancePerPerson);
+
     // Pay to all other non-bankrupt players
-    for (const playerId in state.players) {
-        const id = parseInt(playerId);
-        if (id === activePlayer.id) continue;
-
-        const otherPlayer = getPlayerById(state, id);
-        if (otherPlayer.stage === "BANKRUPT" || otherPlayer.stage === "LEFT_GAME") {
-            continue;
-        }
-
-        // Transfer money (active player pays what they can afford)
-        const payment = Math.min(amount, activePlayer.balance);
+    for (const playerId of otherExistingPlayers) {
+        const otherPlayer = getPlayerById(state, playerId);
         activePlayer.balance -= payment;
         otherPlayer.balance += payment;
-
         updatedPlayers.push(otherPlayer);
-
-        // Stop if active player runs out of money
-        if (activePlayer.balance <= 0) break;
     }
 
     return updateMultiplePlayerStates(state, updatedPlayers);
