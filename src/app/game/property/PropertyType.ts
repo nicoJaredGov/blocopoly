@@ -1,17 +1,19 @@
 export const PropertyType = {
     START: 0,
     RESIDENTIAL: 1,
-    SURPRISE: 2,
-    TAX: 3,
-    AIRPORT: 4,
-    JAIL: 5,
-    VACATION: 6,
-    GO_TO_JAIL: 7,
-    POWER: 8,
-    WATER: 9
+    CHANCE: 2,
+    COMMUNITY_CHEST: 3,
+    INCOME_TAX: 4,
+    WEALTH_TAX: 5,
+    AIRPORT: 6,
+    JAIL: 7,
+    VACATION: 8,
+    GO_TO_JAIL: 9,
+    POWER: 10,
+    WATER: 11
 } as const;
 
 export type PropertyTypeValue = (typeof PropertyType)[keyof typeof PropertyType];
 
-export const OwnablePropertyTypes =
+export const OWNABLE_PROPERTY_TYPES =
     PropertyType.RESIDENTIAL | PropertyType.AIRPORT | PropertyType.POWER | PropertyType.WATER;

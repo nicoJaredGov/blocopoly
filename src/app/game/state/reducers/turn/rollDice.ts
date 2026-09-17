@@ -8,7 +8,7 @@ import { GameStateDTO } from "../../GameState";
 import { getActivePlayer, updatePlayerState } from "../utils";
 import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
 import { getPropertyConfig } from "@/app/setup/BoardConfig";
-import { OwnablePropertyTypes, PropertyType } from "@/app/game/property/PropertyType";
+import { OWNABLE_PROPERTY_TYPES, PropertyType } from "@/app/game/property/PropertyType";
 import { payRent } from "../payRent";
 
 const NUM_BOARD_POSITIONS = 40;
@@ -64,7 +64,7 @@ function resolveLanding(
             updated.vacationBalance = 0;
             break;
 
-        case OwnablePropertyTypes:
+        case OWNABLE_PROPERTY_TYPES:
             const property = state.ownedProperties[player.boardPosition];
             if (!property || property.owner === -1 || property.isMortgaged) {
                 break;
@@ -74,13 +74,19 @@ function resolveLanding(
             }
             break;
 
-        case PropertyType.SURPRISE:
+        case PropertyType.CHANCE:
             // TODO
             break;
 
-        case PropertyType.TAX:
+        case PropertyType.COMMUNITY_CHEST:
             // TODO
             break;
+
+        case PropertyType.INCOME_TAX:
+            // TODO
+            break;
+
+        case PropertyType.WEALTH_TAX:
     }
 
     return updatePlayerState(updated, player);

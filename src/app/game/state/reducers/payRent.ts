@@ -14,15 +14,10 @@ export function payRent(
     rentDue: number
 ): GameStateDTO {
     const owner = getPlayerById(state, property.owner);
-    const diff = player.balance - rentDue;
+    const amountTransferred = Math.min(player.balance, rentDue);
 
-    if (diff < 0) {
-        owner.balance += player.balance;
-        player.balance = diff;
-    } else {
-        player.balance -= rentDue;
-        owner.balance += rentDue;
-    }
+    owner.balance += amountTransferred;
+    player.balance -= rentDue;
 
     return updateMultiplePlayerStates(state, [player, owner]);
 }
