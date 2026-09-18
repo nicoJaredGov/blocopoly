@@ -10,6 +10,7 @@ import { OWNABLE_PROPERTY_TYPES, PropertyType } from "@/app/game/property/Proper
 import { updatePlayerState } from "../utils";
 import { payRent } from "../payRent";
 import { resolveCard } from "./resolveCard";
+import { payBank } from "../payBank";
 
 /**
  * Applies landing-cell effects after the player's boardPosition has been updated.
@@ -49,10 +50,14 @@ export function resolveLanding(state: GameStateDTO, player: PlayerDTO): GameStat
             return resolveCard(communityChestCard.type, communityChestCard.data, updated);
 
         case PropertyType.INCOME_TAX:
-            // TODO
-            break;
+            // TODO: Read tax percentage from config
+            const incomeTax = Math.round(player.balance * 0.1);
+            return payBank(updated, player, incomeTax);
 
         case PropertyType.WEALTH_TAX:
+            // TODO: Read tax percentage from config
+            const wealthTax = Math.round(player.balance * 0.15);
+            return payBank(updated, player, wealthTax);
     }
 
     return updatePlayerState(updated, player);
