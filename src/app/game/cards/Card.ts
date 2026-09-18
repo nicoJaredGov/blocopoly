@@ -6,6 +6,7 @@ import { CardTypeValue } from "./CardType";
  * Contains static configuration data set during card creation.
  */
 export interface Card {
+    id: number;
     type: CardTypeValue;
     description: string;
     data: CardData;

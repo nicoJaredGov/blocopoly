@@ -12,12 +12,14 @@ export interface BoardConfig {
     name: string;
     /** All 40 board cells in position order */
     properties: (Property | OwnablePropertyConfig)[];
-    /** Colour groups keyed by block id */
+    /** Colour groups keyed by block Id */
     propertyBlocks: Record<number, PropertyBlock>;
-    /** Community chest card deck */
-    communityChestCards: Card[];
-    /** Chance card deck */
-    chanceCards: Card[];
+    /** Full deck of cards grouped by card Id */
+    cardDeck: Record<number, Card>;
+    /** Community chest card Ids from card deck*/
+    communityChestCards: number[];
+    /** Chance card Ids from card deck */
+    chanceCards: number[];
 }
 
 /** Look up static config for any board position. */

@@ -11,10 +11,3 @@ export const CardType = {
 } as const;
 
 export type CardTypeValue = (typeof CardType)[keyof typeof CardType];
-
-export const COMMUNITY_CHEST_TYPES =
-    CardType.EARN |
-    CardType.GO_TO |
-    CardType.GO_BACK |
-    CardType.JAIL_FREE_CARD |
-    CardType.COLLECT_FROM_EVERYONE;
