@@ -18,9 +18,7 @@ export interface GameStateDTO {
     trades: Trade[];
     stage: Stage;
     startSalary: number;
-    /** Money placed in the middle of the board.
-     * Collected by a player who lands on vacation spot
-     */
+    /** Vacation pot money collected by a player who lands on vacation spot */
     vacationBalance: number;
 }
 

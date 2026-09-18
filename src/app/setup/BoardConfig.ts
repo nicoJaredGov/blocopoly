@@ -47,3 +47,18 @@ export function getBlockPositions(board: BoardConfig, position: number): number[
         .filter((p): p is OwnablePropertyConfig => "blockId" in p && p.blockId === config.blockId)
         .map((p) => p.position);
 }
+
+export function getRandomCommunityChestCard(board: BoardConfig): Card {
+    return getRandomCard(board, board.communityChestCards);
+}
+
+export function getRandomChanceCard(board: BoardConfig): Card {
+    return getRandomCard(board, board.chanceCards);
+}
+
+function getRandomCard(board: BoardConfig, arr: number[]): Card {
+    // TODO Might need to change to not reuse cards
+    // And also add probability weights to cards
+    const randomCard = arr[Math.floor(Math.random() * arr.length)];
+    return board.cardDeck[randomCard] ?? console.warn("This card does not exist in config.");
+}

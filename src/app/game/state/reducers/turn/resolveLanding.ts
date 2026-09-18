@@ -1,10 +1,15 @@
 import { mutatePlayerOnVacation, mutatePlayerToJail, PlayerDTO } from "@/app/game/player/Player";
 import { GameStateDTO } from "../../GameState";
-import { getPropertyConfig } from "@/app/setup/BoardConfig";
+import {
+    getPropertyConfig,
+    getRandomChanceCard,
+    getRandomCommunityChestCard
+} from "@/app/setup/BoardConfig";
 import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
 import { OWNABLE_PROPERTY_TYPES, PropertyType } from "@/app/game/property/PropertyType";
 import { updatePlayerState } from "../utils";
 import { payRent } from "../payRent";
+import { resolveCard } from "./resolveCard";
 
 /**
  * Applies landing-cell effects after the player's boardPosition has been updated.
@@ -36,12 +41,12 @@ export function resolveLanding(state: GameStateDTO, player: PlayerDTO): GameStat
             break;
 
         case PropertyType.CHANCE:
-            // TODO
-            break;
+            const chanceCard = getRandomChanceCard(boardConfig);
+            return resolveCard(chanceCard.type, chanceCard.data, updated);
 
         case PropertyType.COMMUNITY_CHEST:
-            // TODO
-            break;
+            const communityChestCard = getRandomCommunityChestCard(boardConfig);
+            return resolveCard(communityChestCard.type, communityChestCard.data, updated);
 
         case PropertyType.INCOME_TAX:
             // TODO
