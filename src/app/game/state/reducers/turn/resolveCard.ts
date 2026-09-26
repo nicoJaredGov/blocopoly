@@ -13,6 +13,7 @@ import { payBank } from "../payBank";
 import { GO_TO_JAIL_POSITION, NUM_BOARD_POSITIONS } from "@/app/game/constants";
 import { resolveLanding } from "./resolveLanding";
 import { CardData } from "@/app/game/cards/CardData";
+import { endTurnForPlayer } from "./endTurn";
 
 /**
  * Main resolver that dispatches to specific card type handlers.
@@ -103,7 +104,7 @@ function resolveJailFreeCard(state: GameStateDTO): GameStateDTO {
 function resolveGoToJail(state: GameStateDTO): GameStateDTO {
     const player = getActivePlayer(state);
     mutatePlayerToJail(player);
-    return updatePlayerState(state, player);
+    return endTurnForPlayer(state, player);
 }
 
 /**

@@ -1,9 +1,13 @@
+import { PlayerDTO } from "@/app/game/player/Player";
 import { GameStateDTO } from "../../GameState";
 import { getActivePlayer, getNextAvailablePlayer } from "../utils";
 
 export function endTurn(state: GameStateDTO): GameStateDTO {
     const player = getActivePlayer(state);
-    player.stage = "WAITING";
+    return endTurnForPlayer(state, player);
+}
+
+export function endTurnForPlayer(state: GameStateDTO, player: PlayerDTO): GameStateDTO {
     const nextId = getNextAvailablePlayer(state);
 
     return {
@@ -11,7 +15,7 @@ export function endTurn(state: GameStateDTO): GameStateDTO {
         activePlayer: nextId,
         players: {
             ...state.players,
-            [player.id]: player,
+            [player.id]: { ...player, stage: "WAITING" },
             [nextId]: { ...state.players[nextId], stage: "ROLL_DICE" }
         }
     };

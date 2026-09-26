@@ -11,6 +11,7 @@ import { resolveLanding } from "./resolveLanding";
 import { getPropertyConfig } from "@/app/setup/BoardConfig";
 import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
 import { PropertyType } from "@/app/game/property/PropertyType";
+import { endTurnForPlayer } from "./endTurn";
 
 type D6Result = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -77,7 +78,7 @@ function handleNormalRoll(state: GameStateDTO, player: PlayerDTO): GameStateDTO 
         player.doublesRolled += 1;
         if (player.doublesRolled === DOUBLES_LIMIT) {
             mutatePlayerToJail(player);
-            return updatePlayerState(state, player);
+            return endTurnForPlayer(state, player);
         }
         player.stage = "ROLL_DICE";
     } else {

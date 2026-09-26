@@ -11,6 +11,7 @@ import { updatePlayerState } from "../utils";
 import { payRent } from "../payRent";
 import { resolveCard } from "./resolveCard";
 import { payBank } from "../payBank";
+import { endTurnForPlayer } from "./endTurn";
 
 /**
  * Applies landing-cell effects after the player's boardPosition has been updated.
@@ -24,12 +25,12 @@ export function resolveLanding(state: GameStateDTO, player: PlayerDTO): GameStat
     switch (propertyType) {
         case PropertyType.GO_TO_JAIL:
             mutatePlayerToJail(player);
-            return updatePlayerState(updated, player);
+            return endTurnForPlayer(updated, player);
 
         case PropertyType.VACATION:
             mutatePlayerOnVacation(player, state.vacationBalance);
             updated.vacationBalance = 0;
-            break;
+            return endTurnForPlayer(updated, player);
 
         case OWNABLE_PROPERTY_TYPES:
             const property = state.ownedProperties[player.boardPosition];
