@@ -14,7 +14,8 @@ import {
     bankrupt,
     mortgageProperty,
     unmortgageProperty,
-    useJailFreeCard
+    useJailFreeCard,
+    startAuction
 } from "./reducers";
 import { GameStateDTO } from "./GameState";
 
@@ -44,6 +45,7 @@ const handlers: HandlerMap = {
     ROLL_DICE: rollDice,
     END_TURN: endTurn,
     USE_JAIL_FREE_CARD: useJailFreeCard,
+    START_AUCTION: startAuction,
     BANKRUPT: (state, action) => bankrupt(state, action.payload),
     BUY_PROPERTY: (state, action) => buyProperty(state, action.payload),
     BUY_HOUSE: (state, action) => buyHouse(state, action.payload),

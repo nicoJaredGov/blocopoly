@@ -4,6 +4,7 @@ export type GameStateAction =
     | { type: "ROLL_DICE" }
     | { type: "END_TURN" }
     | { type: "USE_JAIL_FREE_CARD" }
+    | { type: "START_AUCTION" }
     | { type: "BUY_PROPERTY"; payload: { playerId: number; propertyPosition: number } }
     | { type: "SELL_PROPERTY"; payload: { playerId: number; propertyPosition: number } }
     | { type: "MORTGAGE_PROPERTY"; payload: { playerId: number; propertyPosition: number } }
