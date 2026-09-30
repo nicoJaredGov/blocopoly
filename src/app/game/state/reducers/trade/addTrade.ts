@@ -1,6 +1,7 @@
 import { GameStateDTO } from "../../GameState";
-import { Trade, MAX_TRADES } from "../../../trades/Trade";
+import { Trade } from "../../../trades/Trade";
 import { isValidTradeTerms } from "./tradeValidation";
+import { MAX_TRADES } from "@/app/game/constants";
 
 export function addTrade(state: GameStateDTO, trade: Trade): GameStateDTO {
     if (!isValidAdd(state, trade)) return state;

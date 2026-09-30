@@ -16,7 +16,6 @@ import { endTurnForPlayer } from "./endTurn";
 /**
  * Applies landing-cell effects after the player's boardPosition has been updated.
  * Handles GO_TO_JAIL, VACATION, and salary collection for passing GO.
- * TODO: add unowned property, owned property, surprise/community chest handling.
  */
 export function resolveLanding(state: GameStateDTO, player: PlayerDTO): GameStateDTO {
     let updated = { ...state };

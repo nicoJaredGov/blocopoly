@@ -1,5 +1,3 @@
-export const MAX_TRADES = 10;
-
 /**
  * Represents a pending trade proposal between two players.
  */

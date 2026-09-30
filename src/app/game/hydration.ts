@@ -61,16 +61,9 @@ export function toGameStateVM(
     });
 
     return {
-        activePlayer: state.activePlayer,
+        ...state,
         currentPlayer,
         players,
-        board,
-        trades: state.trades,
-        stage: state.stage,
-        ownedProperties: state.ownedProperties,
-        vacationBalance: state.vacationBalance,
-        startSalary: state.startSalary,
-        boardId: state.boardId,
-        auction: state.auction
+        board
     };
 }

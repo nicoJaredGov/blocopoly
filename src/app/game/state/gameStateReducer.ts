@@ -27,13 +27,12 @@ export function getInitialState(
     config: GameConfig
 ): GameStateDTO {
     return {
+        ...config,
         activePlayer: 0,
         players,
         ownedProperties: {},
         trades: [],
         stage: "NORMAL",
-        startSalary: config.startSalary,
-        boardId: config.boardId,
         vacationBalance: 0,
         auction: null
     };

@@ -1,35 +1,7 @@
 import { PropertyType } from "@/app/game/property/PropertyType";
-import { OwnablePropertyConfig } from "@/app/game/property/OwnableProperty";
-import { Property } from "@/app/game/property/Property";
 import { BoardConfig } from "../BoardConfig";
-import { Card, CardData, CardType, CardTypeValue } from "@/app/game/cards";
-
-function card(id: number, type: CardTypeValue, data: CardData, description: string): Card {
-    return { id, type, data, description };
-}
-
-function prop(
-    row: number,
-    col: number,
-    position: number,
-    name: string,
-    type: Property["type"]
-): Property {
-    return { row, col, position, name, type };
-}
-
-function owned(
-    row: number,
-    col: number,
-    position: number,
-    name: string,
-    type: OwnablePropertyConfig["type"],
-    blockId: number,
-    baseRent: number,
-    cost: number
-): OwnablePropertyConfig {
-    return { row, col, position, name, type, blockId, baseRent, cost };
-}
+import { CardType } from "@/app/game/cards";
+import { card, owned, prop } from "../utils";
 
 export const customBoard: BoardConfig = {
     name: "Custom",

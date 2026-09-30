@@ -1,12 +1,12 @@
 "use client";
 
+import React, { useReducer } from "react";
 import { Box } from "@mui/material";
 import Board from "./board/board";
 import { getInitialState, gameStateReducer } from "./state/gameStateReducer";
 import { getBoardConfig } from "@/app/setup/boards/boardRegistry";
-import { toGameStateVM } from "./hydration";
-import React, { useReducer } from "react";
 import { GameConfig } from "@/app/setup/GameConfig";
+import { toGameStateVM } from "./hydration";
 
 // Temporary: instantiate a default config directly until the setup page passes one in.
 const devGameConfig: GameConfig = {

@@ -8,7 +8,7 @@ export interface Property {
     // Grid position (for rendering)
     row: number;
     col: number;
-    /** Board position (0–39) */
+    /** Board position */
     position: number;
     name: string;
     type: PropertyTypeValue;
