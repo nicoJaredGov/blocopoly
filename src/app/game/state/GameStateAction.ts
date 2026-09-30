@@ -1,10 +1,10 @@
+import { BidTypeValue } from "../auction/BidType";
 import { Trade } from "../trades/Trade";
 
 export type GameStateAction =
     | { type: "ROLL_DICE" }
     | { type: "END_TURN" }
     | { type: "USE_JAIL_FREE_CARD" }
-    | { type: "START_AUCTION" }
     | { type: "BUY_PROPERTY"; payload: { playerId: number; propertyPosition: number } }
     | { type: "SELL_PROPERTY"; payload: { playerId: number; propertyPosition: number } }
     | { type: "MORTGAGE_PROPERTY"; payload: { playerId: number; propertyPosition: number } }
@@ -15,5 +15,8 @@ export type GameStateAction =
     | { type: "EDIT_TRADE"; payload: { tradeId: number; updated: Trade } }
     | { type: "REMOVE_TRADE"; payload: { tradeId: number } }
     | { type: "ACCEPT_TRADE"; payload: { tradeId: number } }
-    | { type: "BANKRUPT"; payload: { playerId: number } };
+    | { type: "BANKRUPT"; payload: { playerId: number } }
+    | { type: "START_AUCTION"; payload: { propertyId: number } }
+    | { type: "INCREASE_BID"; payload: { playerId: number; bidType: BidTypeValue } }
+    | { type: "END_AUCTION" };
 // | { type: "LEAVE_GAME"; payload: { playerId: number } };

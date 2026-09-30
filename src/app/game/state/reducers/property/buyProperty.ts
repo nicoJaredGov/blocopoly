@@ -1,5 +1,5 @@
 import { GameStateDTO } from "../../GameState";
-import { buyOwnableProperty } from "../../../property/OwnableProperty";
+import { buyOwnableProperty, OwnablePropertyConfig } from "../../../property/OwnableProperty";
 import { decreasePlayerBalance, updatedPropertyAndPlayer } from "../utils";
 import { boardConfig } from "../../../board/board_configs/boardAccessor";
 import { getBlockPositions, getOwnableConfig } from "@/app/setup/BoardConfig";
@@ -17,18 +17,37 @@ export function buyProperty(
         return state;
     }
 
-    const player = decreasePlayerBalance(state, playerId, config.cost);
+    return buyPropertyForCost(state, playerId, config, config.cost);
+}
+
+/** Transfers property to player and reduces their balance by provided cost.
+ *
+ * Validation does not occur here and should be handled before this is called.
+ */
+export function buyPropertyForCost(
+    state: GameStateDTO,
+    playerId: number,
+    propertyConfig: OwnablePropertyConfig,
+    cost: number
+): GameStateDTO {
+    const player = decreasePlayerBalance(state, playerId, cost);
     const newProperty = {
-        position: propertyPosition,
+        position: propertyConfig.position,
         numHouses: 0,
         isMortgaged: false,
         owner: -1,
-        baseRent: config.baseRent,
-        rent: config.baseRent,
-        cost: config.cost
+        baseRent: propertyConfig.baseRent,
+        rent: propertyConfig.baseRent,
+        cost: propertyConfig.cost
     };
-    const hasWholeBlock = hasWholeBlockCheck(state, propertyPosition, playerId);
-    const updated = buyOwnableProperty(newProperty, playerId, config.baseRent, hasWholeBlock);
+
+    const hasWholeBlock = hasWholeBlockCheck(state, propertyConfig.position, playerId);
+    const updated = buyOwnableProperty(
+        newProperty,
+        playerId,
+        propertyConfig.baseRent,
+        hasWholeBlock
+    );
 
     return updatedPropertyAndPlayer(state, updated, player);
 }

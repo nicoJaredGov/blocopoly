@@ -3,6 +3,7 @@ import { Stage } from "../Stage";
 import { Trade } from "../trades/Trade";
 import { OwnableProperty, OwnablePropertyDTO } from "../property/OwnableProperty";
 import { Property } from "../property/Property";
+import { Auction } from "../auction/Auction";
 
 /**
  * Serialized game state — only mutable data sent over the wire.
@@ -20,6 +21,7 @@ export interface GameStateDTO {
     startSalary: number;
     /** Vacation pot money collected by a player who lands on vacation spot */
     vacationBalance: number;
+    auction: Auction | null;
 }
 
 /**

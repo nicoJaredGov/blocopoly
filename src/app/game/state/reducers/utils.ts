@@ -167,3 +167,20 @@ export function getOtherExistingPlayers(state: GameStateDTO): PlayerDTO[] {
         (p) => p.stage !== "BANKRUPT" && p.stage !== "LEFT_GAME" && p.id !== state.activePlayer
     );
 }
+
+/**
+ * Finds the key by max value for a given record.
+ * @param record
+ * @returns
+ */
+export const findMaxKey = (record: Record<number, number>): number | undefined => {
+    const keys = Object.keys(record);
+
+    if (keys.length === 0) return undefined;
+
+    const maxStringKey = keys.reduce((maxKey, currentKey) =>
+        record[Number(currentKey)] > record[Number(maxKey)] ? currentKey : maxKey
+    );
+
+    return Number(maxStringKey);
+};

@@ -15,7 +15,9 @@ import {
     mortgageProperty,
     unmortgageProperty,
     useJailFreeCard,
-    startAuction
+    startAuction,
+    endAuction,
+    increaseBid
 } from "./reducers";
 import { GameStateDTO } from "./GameState";
 
@@ -30,7 +32,8 @@ export function getInitialState(
         trades: [],
         stage: "NORMAL",
         startSalary,
-        vacationBalance: 0
+        vacationBalance: 0,
+        auction: null
     };
 }
 
@@ -45,7 +48,6 @@ const handlers: HandlerMap = {
     ROLL_DICE: rollDice,
     END_TURN: endTurn,
     USE_JAIL_FREE_CARD: useJailFreeCard,
-    START_AUCTION: startAuction,
     BANKRUPT: (state, action) => bankrupt(state, action.payload),
     BUY_PROPERTY: (state, action) => buyProperty(state, action.payload),
     BUY_HOUSE: (state, action) => buyHouse(state, action.payload),
@@ -56,7 +58,10 @@ const handlers: HandlerMap = {
     REMOVE_TRADE: (state, action) => removeTrade(state, action.payload),
     ACCEPT_TRADE: (state, action) => acceptTrade(state, action.payload),
     MORTGAGE_PROPERTY: (state, action) => mortgageProperty(state, action.payload),
-    UNMORTGAGE_PROPERTY: (state, action) => unmortgageProperty(state, action.payload)
+    UNMORTGAGE_PROPERTY: (state, action) => unmortgageProperty(state, action.payload),
+    START_AUCTION: (state, action) => startAuction(state, action.payload),
+    INCREASE_BID: (state, action) => increaseBid(state, action.payload),
+    END_AUCTION: endAuction
 };
 
 export function gameStateReducer(state: GameStateDTO, action: GameStateAction): GameStateDTO {
