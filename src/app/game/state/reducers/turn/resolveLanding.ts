@@ -51,13 +51,11 @@ export function resolveLanding(state: GameStateDTO, player: PlayerDTO): GameStat
             return resolveCard(communityChestCard.type, communityChestCard.data, updated);
 
         case PropertyType.INCOME_TAX:
-            // TODO: Read tax percentage from config
-            const incomeTax = Math.round(player.balance * 0.1);
+            const incomeTax = Math.round(player.balance * state.incomeTaxRate);
             return payBank(updated, player, incomeTax);
 
         case PropertyType.WEALTH_TAX:
-            // TODO: Read tax percentage from config
-            const wealthTax = Math.round(player.balance * 0.15);
+            const wealthTax = Math.round(player.balance * state.wealthTaxRate);
             return payBank(updated, player, wealthTax);
     }
 

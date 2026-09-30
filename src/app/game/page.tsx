@@ -13,8 +13,9 @@ const devGameConfig: GameConfig = {
     boardId: "custom",
     startSalary: 2000,
     shouldLimitJailPrivileges: false,
-    incomeTaxPercentage: 10,
-    wealthTaxPercentage: 15
+    incomeTaxRate: 0.1,
+    wealthTaxRate: 0.15,
+    auctionTimeDuration: 30
 };
 
 // Temporary: initialise with no players for local dev rendering.

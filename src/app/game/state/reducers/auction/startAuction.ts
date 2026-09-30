@@ -14,7 +14,7 @@ export function startAuction(state: GameStateDTO, payload: { propertyId: number 
             propertyId,
             propertyCost: propertyConfig.cost,
             bids: {},
-            timeRemaining: 30 //TODO fetch from game config
+            timeRemaining: state.auctionTimeDuration
         }
     };
 }

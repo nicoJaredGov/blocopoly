@@ -5,6 +5,8 @@ export interface GameConfig {
     startSalary: number;
     /** Limits players in jail from collecting rent, building houses, and buying properties */
     shouldLimitJailPrivileges: boolean;
-    incomeTaxPercentage: number;
-    wealthTaxPercentage: number;
+    incomeTaxRate: number;
+    wealthTaxRate: number;
+    /** Initial auction time duration (in seconds) till auction closes */
+    auctionTimeDuration: number;
 }
