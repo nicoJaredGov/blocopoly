@@ -5,7 +5,7 @@ import {
     getRandomChanceCard,
     getRandomCommunityChestCard
 } from "@/app/setup/BoardConfig";
-import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
+import { getBoardConfig } from "@/app/setup/boards/boardRegistry";
 import { OWNABLE_PROPERTY_TYPES, PropertyType } from "@/app/game/property/PropertyType";
 import { updatePlayerState } from "../utils";
 import { payRent } from "../payRent";
@@ -20,6 +20,7 @@ import { endTurnForPlayer } from "./endTurn";
  */
 export function resolveLanding(state: GameStateDTO, player: PlayerDTO): GameStateDTO {
     let updated = { ...state };
+    const boardConfig = getBoardConfig(state.boardId);
     const propertyType = getPropertyConfig(boardConfig, player.boardPosition)?.type;
 
     switch (propertyType) {

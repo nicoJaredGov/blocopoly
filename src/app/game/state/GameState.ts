@@ -4,12 +4,15 @@ import { Trade } from "../trades/Trade";
 import { OwnableProperty, OwnablePropertyDTO } from "../property/OwnableProperty";
 import { Property } from "../property/Property";
 import { Auction } from "../auction/Auction";
+import { BoardId } from "@/app/setup/boards/boardRegistry";
 
 /**
  * Serialized game state — only mutable data sent over the wire.
  * The board is not included here; it is static config held client-side.
  */
 export interface GameStateDTO {
+    /** Identifies the static board layout in use — resolves to a BoardConfig via the registry. */
+    boardId: BoardId;
     /** The player who is playing their turn now */
     activePlayer: number;
     /** Mutable player state keyed by player id */

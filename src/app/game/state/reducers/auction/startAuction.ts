@@ -1,11 +1,10 @@
-import { getOwnableConfig } from "@/app/setup/BoardConfig";
 import { GameStateDTO } from "../../GameState";
-import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
+import { getOwnablePropertyConfig } from "../utils";
 
 export function startAuction(state: GameStateDTO, payload: { propertyId: number }): GameStateDTO {
     const { propertyId } = payload;
 
-    const propertyConfig = getOwnableConfig(boardConfig, propertyId);
+    const propertyConfig = getOwnablePropertyConfig(state, propertyId);
     if (!propertyConfig) return state;
 
     return {

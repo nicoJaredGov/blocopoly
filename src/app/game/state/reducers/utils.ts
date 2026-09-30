@@ -1,6 +1,8 @@
 import { PlayerDTO } from "../../player/Player";
-import { OwnablePropertyDTO } from "../../property/OwnableProperty";
+import { OwnablePropertyConfig, OwnablePropertyDTO } from "../../property/OwnableProperty";
 import { GameStateDTO } from "../GameState";
+import { getBlockPositions, getOwnableConfig } from "@/app/setup/BoardConfig";
+import { getBoardConfig } from "@/app/setup/boards/boardRegistry";
 
 /**
  * Returns a clone of the current active player.
@@ -184,3 +186,22 @@ export const findMaxKey = (record: Record<number, number>): number | undefined =
 
     return Number(maxStringKey);
 };
+
+/**
+ * Resolves the static ownable property config for a board position using the
+ * board ID stored in state. Returns undefined if the position is not ownable.
+ */
+export function getOwnablePropertyConfig(
+    state: GameStateDTO,
+    position: number
+): OwnablePropertyConfig | undefined {
+    return getOwnableConfig(getBoardConfig(state.boardId), position);
+}
+
+/**
+ * Returns all board positions that share the same block as the given position,
+ * resolved from the board ID stored in state.
+ */
+export function getBlockPropertyPositions(state: GameStateDTO, position: number): number[] {
+    return getBlockPositions(getBoardConfig(state.boardId), position);
+}

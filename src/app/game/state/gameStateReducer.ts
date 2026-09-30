@@ -20,10 +20,11 @@ import {
     increaseBid
 } from "./reducers";
 import { GameStateDTO } from "./GameState";
+import { GameConfig } from "@/app/setup/GameConfig";
 
 export function getInitialState(
     players: Record<number, PlayerDTO>,
-    startSalary: number //TODO - Will come from game config - added here for mechanics where it will be adjusted dynamically in future.
+    config: GameConfig
 ): GameStateDTO {
     return {
         activePlayer: 0,
@@ -31,7 +32,8 @@ export function getInitialState(
         ownedProperties: {},
         trades: [],
         stage: "NORMAL",
-        startSalary,
+        startSalary: config.startSalary,
+        boardId: config.boardId,
         vacationBalance: 0,
         auction: null
     };

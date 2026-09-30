@@ -1,7 +1,9 @@
 import { GameStateDTO } from "../../GameState";
-import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
-import { getOwnableConfig } from "@/app/setup/BoardConfig";
-import { decreasePlayerBalance, updatedPropertyAndPlayer } from "../utils";
+import {
+    getOwnablePropertyConfig,
+    decreasePlayerBalance,
+    updatedPropertyAndPlayer
+} from "../utils";
 import { isValidPropertyPurchase } from "./purchaseValidation";
 
 export function unmortgageProperty(
@@ -10,7 +12,7 @@ export function unmortgageProperty(
 ): GameStateDTO {
     const { playerId, propertyPosition } = payload;
     const existing = state.ownedProperties[propertyPosition];
-    const config = getOwnableConfig(boardConfig, propertyPosition);
+    const config = getOwnablePropertyConfig(state, propertyPosition);
     if (!config) return state;
 
     if (!isValidPropertyPurchase(state, playerId, propertyPosition, config.cost)) {

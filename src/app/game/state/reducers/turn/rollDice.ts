@@ -9,7 +9,7 @@ import {
 } from "@/app/game/constants";
 import { resolveLanding } from "./resolveLanding";
 import { getPropertyConfig } from "@/app/setup/BoardConfig";
-import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
+import { getBoardConfig } from "@/app/setup/boards/boardRegistry";
 import { PropertyType } from "@/app/game/property/PropertyType";
 import { endTurnForPlayer } from "./endTurn";
 
@@ -97,7 +97,7 @@ function releaseAndMove(state: GameStateDTO, player: PlayerDTO, elapsed: number)
     const prevPosition = player.boardPosition;
     advancePlayer(player, elapsed);
 
-    if (shouldCollectSalary(prevPosition, player.boardPosition, elapsed)) {
+    if (shouldCollectSalary(state, prevPosition, player.boardPosition, elapsed)) {
         player.balance += state.startSalary;
     }
 
@@ -105,11 +105,12 @@ function releaseAndMove(state: GameStateDTO, player: PlayerDTO, elapsed: number)
 }
 
 function shouldCollectSalary(
+    state: GameStateDTO,
     prevPosition: number,
     currentPosition: number,
     elapsed: number
 ): boolean {
-    const propertyType = getPropertyConfig(boardConfig, currentPosition)?.type;
+    const propertyType = getPropertyConfig(getBoardConfig(state.boardId), currentPosition)?.type;
     const hasPassedGo = prevPosition + elapsed >= NUM_BOARD_POSITIONS;
     return hasPassedGo && propertyType !== PropertyType.GO_TO_JAIL;
 }

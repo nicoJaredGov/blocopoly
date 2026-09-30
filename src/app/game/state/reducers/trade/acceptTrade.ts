@@ -1,7 +1,6 @@
 import { GameStateDTO } from "../../GameState";
 import { buyOwnableProperty, OwnablePropertyDTO } from "../../../property/OwnableProperty";
-import { boardConfig } from "../../../board/board_configs/boardAccessor";
-import { getBlockPositions, getOwnableConfig } from "@/app/setup/BoardConfig";
+import { getBlockPropertyPositions, getOwnablePropertyConfig } from "../utils";
 import { payRent } from "../payRent";
 
 /**
@@ -10,15 +9,16 @@ import { payRent } from "../payRent";
  * so no per-house rent recalculation is needed.
  */
 function transferProperty(
+    state: GameStateDTO,
     ownedProperties: Record<number, OwnablePropertyDTO>,
     position: number,
     newOwnerId: number
 ): OwnablePropertyDTO {
     const property = ownedProperties[position];
-    const config = getOwnableConfig(boardConfig, position);
+    const config = getOwnablePropertyConfig(state, position);
     if (!property || !config) return property;
 
-    const blockPositions = getBlockPositions(boardConfig, position);
+    const blockPositions = getBlockPropertyPositions(state, position);
     const hasWholeBlock = blockPositions.every(
         (pos) => pos === position || ownedProperties[pos]?.owner === newOwnerId
     );
@@ -47,13 +47,13 @@ export function acceptTrade(state: GameStateDTO, payload: { tradeId: number }): 
     for (const pos of initiatorTradeIns) {
         ownedProperties = {
             ...ownedProperties,
-            [pos]: transferProperty(ownedProperties, pos, recipient)
+            [pos]: transferProperty(state, ownedProperties, pos, recipient)
         };
     }
     for (const pos of recipientTradeIns) {
         ownedProperties = {
             ...ownedProperties,
-            [pos]: transferProperty(ownedProperties, pos, initiator)
+            [pos]: transferProperty(state, ownedProperties, pos, initiator)
         };
     }
 

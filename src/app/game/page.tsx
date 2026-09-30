@@ -6,18 +6,33 @@ import { getInitialState, gameStateReducer } from "./state/gameStateReducer";
 import { getBoardConfig } from "@/app/setup/boards/boardRegistry";
 import { toGameStateVM } from "./hydration";
 import React, { useReducer } from "react";
+import { GameConfig } from "@/app/setup/GameConfig";
+
+// Temporary: instantiate a default config directly until the setup page passes one in.
+const devGameConfig: GameConfig = {
+    boardId: "custom",
+    startSalary: 2000,
+    shouldLimitJailPrivileges: false,
+    incomeTaxPercentage: 10,
+    wealthTaxPercentage: 15
+};
 
 // Temporary: initialise with no players for local dev rendering.
 // In production, state arrives from the WebSocket server and playerConfigs
 // are provided by the lobby/session setup.
-const devInitialState = getInitialState({}, 2000);
+const devInitialState = getInitialState({}, devGameConfig);
 
 export default function GamePage() {
     const [state, dispatch] = useReducer(gameStateReducer, devInitialState);
+    const boardConfig = getBoardConfig(state.boardId);
 
     // Hydrate the lean server state into a full view model for the UI.
-    // customProperties is the static board config loaded once at startup.
-    const vm = toGameStateVM(state, getBoardConfig("custom").properties, {}, 0);
+    const vm = toGameStateVM(state, boardConfig.properties, {}, 0);
+
+    // Derive a flat blockId → color map for the board renderer.
+    const blockColors: Record<number, string> = Object.fromEntries(
+        Object.entries(boardConfig.propertyBlocks).map(([id, block]) => [id, block.color])
+    );
 
     return (
         <Box
@@ -28,7 +43,7 @@ export default function GamePage() {
                 minHeight: "100vh"
             }}
         >
-            <Board board={vm.board} />
+            <Board board={vm.board} blockColors={blockColors} />
         </Box>
     );
 }

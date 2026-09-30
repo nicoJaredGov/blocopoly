@@ -69,6 +69,8 @@ export function toGameStateVM(
         stage: state.stage,
         ownedProperties: state.ownedProperties,
         vacationBalance: state.vacationBalance,
-        startSalary: state.startSalary
+        startSalary: state.startSalary,
+        boardId: state.boardId,
+        auction: state.auction
     };
 }

@@ -1,15 +1,13 @@
 import { GameStateDTO } from "../../GameState";
 import { Trade } from "../../../trades/Trade";
-import { getPlayerBalance } from "../utils";
-import { boardConfig } from "../../../board/board_configs/boardAccessor";
-import { getBlockPositions } from "@/app/setup/BoardConfig";
+import { getBlockPropertyPositions, getPlayerBalance } from "../utils";
 
 /**
  * Returns true if any property in the same block as the given position
  * has at least one house built on it.
  */
 function blockHasHouses(state: GameStateDTO, position: number): boolean {
-    return getBlockPositions(boardConfig, position).some(
+    return getBlockPropertyPositions(state, position).some(
         (pos) => (state.ownedProperties[pos]?.numHouses ?? 0) > 0
     );
 }

@@ -1,7 +1,5 @@
 import { GameStateDTO } from "../../GameState";
-import { getNextAvailablePlayer } from "../utils";
-import { boardConfig } from "../../../board/board_configs/boardAccessor";
-import { getOwnableConfig } from "@/app/setup/BoardConfig";
+import { getNextAvailablePlayer, getOwnablePropertyConfig } from "../utils";
 import { PlayerDTO } from "@/app/game/player/Player";
 import { OwnablePropertyDTO } from "@/app/game/property/OwnableProperty";
 
@@ -14,7 +12,7 @@ export function bankrupt(state: GameStateDTO, payload: { playerId: number }): Ga
     let ownedProperties = { ...state.ownedProperties };
 
     // Calculate liquidation value and pay due rent
-    players = liquidateAndPayDueRent(playerId, bankruptPlayer, ownedProperties, players);
+    players = liquidateAndPayDueRent(state, playerId, bankruptPlayer, ownedProperties, players);
 
     // Mark player as bankrupt
     players = {
@@ -71,6 +69,7 @@ function advancePlayerIfActiveIsBankrupted(
  * Then pays off the due rent partially or fully.
  */
 function liquidateAndPayDueRent(
+    state: GameStateDTO,
     playerId: number,
     bankruptPlayer: PlayerDTO,
     ownedProperties: Record<number, OwnablePropertyDTO>,
@@ -86,7 +85,7 @@ function liquidateAndPayDueRent(
     let liquidationValue = 0;
 
     for (const property of playerProperties) {
-        const config = getOwnableConfig(boardConfig, property.position);
+        const config = getOwnablePropertyConfig(state, property.position);
         if (!config) continue;
         liquidationValue += (property.numHouses * config.cost) / 2;
         liquidationValue += config.cost / 2;

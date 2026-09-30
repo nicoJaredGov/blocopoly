@@ -1,7 +1,6 @@
 import { OwnablePropertyDTO } from "@/app/game/property/OwnableProperty";
 import { GameStateDTO } from "../../GameState";
-import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
-import { getBlockPositions } from "@/app/setup/BoardConfig";
+import { getBlockPropertyPositions } from "../utils";
 
 /**
  * Validates the sale (or mortgage) of a property.
@@ -17,7 +16,7 @@ export function isValidPropertySale(
     if (existing.owner !== playerId) return false;
 
     // No houses may exist on any property in the block
-    const blockPositions = getBlockPositions(boardConfig, propertyPosition);
+    const blockPositions = getBlockPropertyPositions(state, propertyPosition);
     const hasSomeHouses = blockPositions.some((pos) => state.ownedProperties[pos]?.numHouses > 0);
     if (hasSomeHouses) return false;
 

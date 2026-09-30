@@ -1,8 +1,6 @@
 import { GameStateDTO } from "../../GameState";
 import { buyPropertyForCost } from "../property";
-import { findMaxKey } from "../utils";
-import { getOwnableConfig } from "@/app/setup/BoardConfig";
-import { boardConfig } from "@/app/game/board/board_configs/boardAccessor";
+import { findMaxKey, getOwnablePropertyConfig } from "../utils";
 import { isValidPropertyPurchase } from "../property/purchaseValidation";
 
 export function endAuction(state: GameStateDTO): GameStateDTO {
@@ -12,7 +10,7 @@ export function endAuction(state: GameStateDTO): GameStateDTO {
     const highestBidder = findMaxKey(auction.bids);
     if (highestBidder === undefined) return resetToNormalStage(state);
 
-    const config = getOwnableConfig(boardConfig, auction.propertyId);
+    const config = getOwnablePropertyConfig(state, auction.propertyId);
     if (!config) return state;
 
     // Highest bidder pays the bid amount for the property
