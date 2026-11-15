@@ -2,69 +2,181 @@
 
 import { Property } from "../property/Property";
 import { isOwnableProperty, OwnableProperty } from "../property/OwnableProperty";
+import { Player } from "../player/Player";
+import PieceTray from "./PieceTray";
+
+const BOARD_MIN = 1;
+const BOARD_MAX = 11;
+const BOARD_BG = "#83d0e0";
+const CELL_PX = 72;
+const STRIP_PX = 19;
+
+type StripSide = "top" | "bottom" | "left" | "right";
+
+function getStripSide(row: number, col: number): StripSide {
+    if (row === BOARD_MAX) return "top";
+    if (row === BOARD_MIN) return "bottom";
+    if (col === BOARD_MAX) return "left";
+    return "right";
+}
+
+// Strip sits on the outer edge; content flex direction places it first in the flow.
+const STRIP_FLEX_DIRECTION: Record<StripSide, "column" | "column-reverse" | "row" | "row-reverse"> =
+    {
+        top: "column",
+        bottom: "column-reverse",
+        left: "row",
+        right: "row-reverse"
+    };
+
+// Side-column content is rotated so text reads toward the board center.
+// col 1  (strip on right): reader stands left  → text bottom-to-top → rotate(90deg)
+// col 11 (strip on left):  reader stands right → text top-to-bottom → rotate(-90deg)
+const SIDE_ROTATION: Partial<Record<StripSide, string>> = {
+    right: "rotate(90deg)",
+    left: "rotate(-90deg)"
+};
+
+function ContentBlock({
+    property,
+    ownable,
+    occupants,
+    isSideCol
+}: {
+    property: Property | OwnableProperty;
+    ownable: OwnableProperty | null;
+    occupants: Player[];
+    isSideCol: boolean;
+}) {
+    return (
+        <div
+            style={{
+                // Pre-rotation width = cell height so text wraps correctly after rotation.
+                // Height is auto on side cells; the outer overflow:hidden clips to available space.
+                width: isSideCol ? CELL_PX : "100%",
+                height: isSideCol ? "auto" : "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "3px",
+                // Non-ownable cells have no strip, so offset the top to keep the name
+                // vertically aligned with ownable cell names across the whole board.
+                paddingTop: ownable ? "3px" : `${STRIP_PX}px`,
+                paddingBottom: "3px",
+                paddingLeft: "4px",
+                paddingRight: "4px",
+                boxSizing: "border-box"
+            }}
+        >
+            <span
+                style={{
+                    width: "100%",
+                    textAlign: "center",
+                    fontSize: "11px",
+                    color: "black",
+                    lineHeight: 1.2,
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word",
+                    WebkitTextStroke: "0px"
+                }}
+            >
+                {property.name}
+            </span>
+
+            {/* Always rendered — invisible on non-ownable cells to hold vertical space */}
+            <span
+                style={{
+                    flexShrink: 0,
+                    fontSize: "10px",
+                    fontWeight: "700",
+                    color: ownable ? "white" : "transparent",
+                    backgroundColor: ownable ? "#333" : "transparent",
+                    borderRadius: "4px",
+                    padding: "1px 4px",
+                    WebkitTextStroke: "0px"
+                }}
+            >
+                {ownable ? `$${ownable.cost}` : "\u00A0\u00A0\u00A0\u00A0"}
+            </span>
+
+            <PieceTray occupants={occupants} />
+        </div>
+    );
+}
 
 export default function Cell({
     property,
-    color
+    color,
+    occupants = []
 }: {
     property: Property | OwnableProperty;
     color: string | undefined;
+    occupants?: Player[];
 }) {
-    const ownable = isOwnableProperty(property) ? property : null;
+    const ownable = isOwnableProperty(property) ? (property as OwnableProperty) : null;
+    const stripSide = getStripSide(property.row, property.col);
+    const isSideCol = stripSide === "left" || stripSide === "right";
+    const rotation = SIDE_ROTATION[stripSide];
+
+    const content = (
+        <ContentBlock
+            property={property}
+            ownable={ownable}
+            occupants={occupants}
+            isSideCol={isSideCol}
+        />
+    );
 
     return (
         <div
             style={{
                 gridRow: property.row,
                 gridColumn: property.col,
-                backgroundColor: color ?? "#83d0e0",
+                backgroundColor: BOARD_BG,
                 border: "1px solid black",
                 display: "flex",
-                flexDirection: "column",
+                flexDirection: ownable ? STRIP_FLEX_DIRECTION[stripSide] : "column",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "13px",
-                textAlign: "center",
-                color: color == "black" ? "white" : "black",
-                WebkitTextStroke: "0.2px black",
-                padding: "2px",
                 width: "100%",
                 height: "100%",
-                boxSizing: "border-box"
+                boxSizing: "border-box",
+                overflow: "hidden"
             }}
         >
             {ownable && (
-                <span
+                <div
                     style={{
+                        backgroundColor: color,
+                        flexShrink: 0,
+                        width: isSideCol ? `${STRIP_PX}px` : "100%",
+                        height: isSideCol ? "100%" : `${STRIP_PX}px`,
+                        borderBottom: stripSide === "top" ? "1px solid rgba(0,0,0,0.3)" : undefined,
+                        borderTop: stripSide === "bottom" ? "1px solid rgba(0,0,0,0.3)" : undefined,
+                        borderRight: stripSide === "left" ? "1px solid rgba(0,0,0,0.3)" : undefined,
+                        borderLeft: stripSide === "right" ? "1px solid rgba(0,0,0,0.3)" : undefined
+                    }}
+                />
+            )}
+
+            {isSideCol ? (
+                <div
+                    style={{
+                        flex: 1,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontSize: "10px",
-                        fontWeight: "bold",
-                        backgroundColor: "rgba(255,255,255,0.55)",
-                        color: "black",
-                        WebkitTextStroke: "0px",
-                        borderRadius: "3px",
-                        padding: "0px 3px",
-                        width: "40px",
-                        marginTop: "2px",
-                        marginBottom: "2px"
+                        overflow: "hidden",
+                        width: "100%",
+                        height: "100%"
                     }}
                 >
-                    ${ownable.cost}
-                </span>
+                    <div style={{ transform: rotation }}>{content}</div>
+                </div>
+            ) : (
+                content
             )}
-            <span
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flex: 1,
-                    width: "100%"
-                }}
-            >
-                {property.name}
-            </span>
         </div>
     );
 }

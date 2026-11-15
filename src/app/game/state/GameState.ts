@@ -1,4 +1,4 @@
-import { PlayerDTO } from "../player/Player";
+import { PlayerDTO, Player, PlayerConfig } from "../player/Player";
 import { Stage } from "../Stage";
 import { Trade } from "../trades/Trade";
 import { OwnableProperty, OwnablePropertyDTO } from "../property/OwnableProperty";
@@ -28,9 +28,11 @@ export interface GameStateDTO extends GameConfig {
  * Client-side view of the full game — combines lean serialized state with
  * static board config so UI components have everything in one place.
  */
-export interface GameState extends GameStateDTO {
+export interface GameState extends Omit<GameStateDTO, "players"> {
     /** The current player on this client device. */
     currentPlayer: number;
+    /** Hydrated players — includes static display config (name, piece, colour). */
+    players: Record<number, Player>;
     /**
      * Full board — static Property/OwnablePropertyConfig cells hydrated with
      * mutable OwnablePropertyDTO state where available.

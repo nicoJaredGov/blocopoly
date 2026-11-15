@@ -35,7 +35,7 @@ export const customBoard: BoardConfig = {
         owned(9, 11, 12, "Eskom", PropertyType.POWER, 9, 10, 20),
         owned(8, 11, 13, "Sandton", PropertyType.RESIDENTIAL, 2, 35, 70),
         owned(7, 11, 14, "Wits", PropertyType.RESIDENTIAL, 2, 40, 80),
-        owned(6, 11, 15, "Gautrain", PropertyType.AIRPORT, 8, 150, 300),
+        owned(6, 11, 15, "Gautrain", PropertyType.AIRPORT, 8, 150, 40),
         owned(5, 11, 16, "Chatsworth", PropertyType.RESIDENTIAL, 3, 40, 80),
         prop(4, 11, 17, "Community Chest", PropertyType.COMMUNITY_CHEST),
         owned(3, 11, 18, "Cape Town", PropertyType.RESIDENTIAL, 3, 45, 90),

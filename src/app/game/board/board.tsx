@@ -4,13 +4,23 @@ import { Box } from "@mui/material";
 import Cell from "./cell";
 import { isOwnableProperty, OwnableProperty } from "../property/OwnableProperty";
 import { Property } from "../property/Property";
+import { Player } from "../player/Player";
 
 interface BoardProps {
     board: (Property | OwnableProperty)[];
     blockColors: Record<string, string>;
+    players?: Record<number, Player>;
 }
 
-export default function Board({ board, blockColors }: BoardProps) {
+export default function Board({ board, blockColors, players = {} }: BoardProps) {
+    // Build a map from board position → players currently on that cell.
+    const occupantsByPosition: Record<number, Player[]> = {};
+    for (const player of Object.values(players)) {
+        const pos = player.boardPosition;
+        if (!occupantsByPosition[pos]) occupantsByPosition[pos] = [];
+        occupantsByPosition[pos].push(player);
+    }
+
     return (
         <Box
             style={{
@@ -29,7 +39,9 @@ export default function Board({ board, blockColors }: BoardProps) {
                     ? blockColors[property.blockId]
                     : undefined;
 
-                return <Cell key={index} property={property} color={color} />;
+                const occupants = occupantsByPosition[property.position] ?? [];
+
+                return <Cell key={index} property={property} color={color} occupants={occupants} />;
             })}
         </Box>
     );
