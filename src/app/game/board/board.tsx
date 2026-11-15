@@ -16,8 +16,8 @@ export default function Board({ board, blockColors }: BoardProps) {
             style={{
                 backgroundColor: "#83d0e0",
                 display: "grid",
-                gridTemplateColumns: "90px repeat(9, 58px) 90px",
-                gridTemplateRows: "90px repeat(9, 58px) 90px",
+                gridTemplateColumns: "112px repeat(9, 72px) 112px",
+                gridTemplateRows: "112px repeat(9, 72px) 112px",
                 gap: "0px",
                 border: "1px solid black",
                 width: "fit-content",
