@@ -6,6 +6,7 @@ import { Player } from "../player/Player";
 import { PropertyType } from "../property/PropertyType";
 import PieceTray from "./PieceTray";
 import JailTray from "./JailTray";
+import BuildingTray from "./BuildingTray";
 
 const BOARD_MIN = 1;
 const BOARD_MAX = 11;
@@ -158,12 +159,38 @@ export default function Cell({
                         flexShrink: 0,
                         width: isSideCol ? `${STRIP_PX}px` : "100%",
                         height: isSideCol ? "100%" : `${STRIP_PX}px`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        overflow: "hidden",
                         borderBottom: stripSide === "top" ? "1px solid rgba(0,0,0,0.3)" : undefined,
                         borderTop: stripSide === "bottom" ? "1px solid rgba(0,0,0,0.3)" : undefined,
                         borderRight: stripSide === "left" ? "1px solid rgba(0,0,0,0.3)" : undefined,
                         borderLeft: stripSide === "right" ? "1px solid rgba(0,0,0,0.3)" : undefined
                     }}
-                />
+                >
+                    {/* On side cells the strip is vertical, so counter-rotate so buildings read horizontally */}
+                    <div
+                        style={{
+                            transform: isSideCol
+                                ? stripSide === "left"
+                                    ? "rotate(-90deg)"
+                                    : "rotate(90deg)"
+                                : undefined,
+                            // Pre-rotation: width becomes physical height, height becomes physical width.
+                            // We want physical width = STRIP_PX and physical height = CELL_PX,
+                            // so set logical width = CELL_PX and logical height = STRIP_PX.
+                            width: isSideCol ? CELL_PX : "100%",
+                            height: isSideCol ? `${STRIP_PX}px` : "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexShrink: 0
+                        }}
+                    >
+                        <BuildingTray numHouses={ownable.numHouses} />
+                    </div>
+                </div>
             )}
 
             {isSideCol ? (

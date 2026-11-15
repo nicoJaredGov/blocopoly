@@ -46,7 +46,7 @@ const devPlayerDTOs: Record<number, PlayerDTO> = {
         isInJail: false,
         isOnVacation: false,
         numJailFreeCards: 0,
-        boardPosition: 5,
+        boardPosition: 23,
         jailTurnsElapsed: 0,
         doublesRolled: 0,
         stage: "WAITING",
@@ -58,7 +58,7 @@ const devPlayerDTOs: Record<number, PlayerDTO> = {
         isInJail: false,
         isOnVacation: false,
         numJailFreeCards: 0,
-        boardPosition: 5,
+        boardPosition: 10,
         jailTurnsElapsed: 0,
         doublesRolled: 0,
         stage: "WAITING",
@@ -79,6 +79,38 @@ const devPlayerDTOs: Record<number, PlayerDTO> = {
 };
 
 const devInitialState = getInitialState(devPlayerDTOs, devGameConfig);
+
+// Temporary: seed a couple of owned properties so building trays are visible in dev.
+// Tel Aviv (pos 1): 2 houses. Pretoria (pos 39): hotel (numHouses = 5).
+devInitialState.ownedProperties = {
+    1: {
+        position: 1,
+        owner: 0,
+        numHouses: 2,
+        isMortgaged: false,
+        baseRent: 10,
+        rent: 30,
+        cost: 10
+    },
+    39: {
+        position: 39,
+        owner: 1,
+        numHouses: 5,
+        isMortgaged: false,
+        baseRent: 90,
+        rent: 540,
+        cost: 180
+    },
+    11: {
+        position: 11,
+        owner: 2,
+        numHouses: 4,
+        isMortgaged: false,
+        baseRent: 30,
+        rent: 150,
+        cost: 60
+    }
+};
 
 export default function GamePage() {
     const [state, dispatch] = useReducer(gameStateReducer, devInitialState);
