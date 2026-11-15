@@ -67,11 +67,11 @@ const devPlayerDTOs: Record<number, PlayerDTO> = {
     3: {
         id: 3,
         balance: 1500,
-        isInJail: false,
+        isInJail: true,
         isOnVacation: false,
         numJailFreeCards: 0,
         boardPosition: 10,
-        jailTurnsElapsed: 0,
+        jailTurnsElapsed: 1,
         doublesRolled: 0,
         stage: "WAITING",
         isHost: false

@@ -5,6 +5,7 @@ import Cell from "./cell";
 import { isOwnableProperty, OwnableProperty } from "../property/OwnableProperty";
 import { Property } from "../property/Property";
 import { Player } from "../player/Player";
+import { PropertyType } from "../property/PropertyType";
 
 interface BoardProps {
     board: (Property | OwnableProperty)[];
@@ -13,12 +14,18 @@ interface BoardProps {
 }
 
 export default function Board({ board, blockColors, players = {} }: BoardProps) {
-    // Build a map from board position → players currently on that cell.
     const occupantsByPosition: Record<number, Player[]> = {};
+    const jailedPlayers: Player[] = [];
+
     for (const player of Object.values(players)) {
         const pos = player.boardPosition;
         if (!occupantsByPosition[pos]) occupantsByPosition[pos] = [];
-        occupantsByPosition[pos].push(player);
+        // Jailed players show only in the jail tray, not the regular piece tray
+        if (player.isInJail) {
+            jailedPlayers.push(player);
+        } else {
+            occupantsByPosition[pos].push(player);
+        }
     }
 
     return (
@@ -38,10 +45,19 @@ export default function Board({ board, blockColors, players = {} }: BoardProps) 
                 const color = isOwnableProperty(property)
                     ? blockColors[property.blockId]
                     : undefined;
-
                 const occupants = occupantsByPosition[property.position] ?? [];
 
-                return <Cell key={index} property={property} color={color} occupants={occupants} />;
+                return (
+                    <Cell
+                        key={index}
+                        property={property}
+                        color={color}
+                        occupants={occupants}
+                        jailedOccupants={
+                            property.type === PropertyType.JAIL ? jailedPlayers : undefined
+                        }
+                    />
+                );
             })}
         </Box>
     );

@@ -3,7 +3,9 @@
 import { Property } from "../property/Property";
 import { isOwnableProperty, OwnableProperty } from "../property/OwnableProperty";
 import { Player } from "../player/Player";
+import { PropertyType } from "../property/PropertyType";
 import PieceTray from "./PieceTray";
+import JailTray from "./JailTray";
 
 const BOARD_MIN = 1;
 const BOARD_MAX = 11;
@@ -20,7 +22,6 @@ function getStripSide(row: number, col: number): StripSide {
     return "right";
 }
 
-// Strip sits on the outer edge; content flex direction places it first in the flow.
 const STRIP_FLEX_DIRECTION: Record<StripSide, "column" | "column-reverse" | "row" | "row-reverse"> =
     {
         top: "column",
@@ -29,7 +30,6 @@ const STRIP_FLEX_DIRECTION: Record<StripSide, "column" | "column-reverse" | "row
         right: "row-reverse"
     };
 
-// Side-column content is rotated so text reads toward the board center.
 // col 1  (strip on right): reader stands left  → text bottom-to-top → rotate(90deg)
 // col 11 (strip on left):  reader stands right → text top-to-bottom → rotate(-90deg)
 const SIDE_ROTATION: Partial<Record<StripSide, string>> = {
@@ -60,8 +60,8 @@ function ContentBlock({
                 alignItems: "center",
                 justifyContent: "center",
                 gap: "3px",
-                // Non-ownable cells have no strip, so offset the top to keep the name
-                // vertically aligned with ownable cell names across the whole board.
+                // Non-ownable cells have no strip, so pad the top by the strip height
+                // to keep the name vertically aligned with ownable cell names.
                 paddingTop: ownable ? "3px" : `${STRIP_PX}px`,
                 paddingBottom: "3px",
                 paddingLeft: "4px",
@@ -108,13 +108,16 @@ function ContentBlock({
 export default function Cell({
     property,
     color,
-    occupants = []
+    occupants = [],
+    jailedOccupants = []
 }: {
     property: Property | OwnableProperty;
     color: string | undefined;
     occupants?: Player[];
+    jailedOccupants?: Player[];
 }) {
     const ownable = isOwnableProperty(property) ? (property as OwnableProperty) : null;
+    const isJailCell = property.type === PropertyType.JAIL;
     const stripSide = getStripSide(property.row, property.col);
     const isSideCol = stripSide === "left" || stripSide === "right";
     const rotation = SIDE_ROTATION[stripSide];
@@ -145,6 +148,9 @@ export default function Cell({
                 overflow: "hidden"
             }}
         >
+            {/* Jail tray — pinned to the top of the cell before all other content */}
+            {isJailCell && <JailTray jailed={jailedOccupants} />}
+
             {ownable && (
                 <div
                     style={{
