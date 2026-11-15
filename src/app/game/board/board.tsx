@@ -46,12 +46,17 @@ export default function Board({ board, blockColors, players = {} }: BoardProps) 
                     ? blockColors[property.blockId]
                     : undefined;
                 const occupants = occupantsByPosition[property.position] ?? [];
+                const ownerColour =
+                    isOwnableProperty(property) && property.owner !== -1
+                        ? players[property.owner]?.colour
+                        : undefined;
 
                 return (
                     <Cell
                         key={index}
                         property={property}
                         color={color}
+                        ownerColour={ownerColour}
                         occupants={occupants}
                         jailedOccupants={
                             property.type === PropertyType.JAIL ? jailedPlayers : undefined

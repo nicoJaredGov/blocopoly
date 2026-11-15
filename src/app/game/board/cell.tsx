@@ -41,11 +41,13 @@ const SIDE_ROTATION: Partial<Record<StripSide, string>> = {
 function ContentBlock({
     property,
     ownable,
+    isOwned,
     occupants,
     isSideCol
 }: {
     property: Property | OwnableProperty;
     ownable: OwnableProperty | null;
+    isOwned: boolean;
     occupants: Player[];
     isSideCol: boolean;
 }) {
@@ -91,14 +93,14 @@ function ContentBlock({
                     flexShrink: 0,
                     fontSize: "10px",
                     fontWeight: "700",
-                    color: ownable ? "white" : "transparent",
-                    backgroundColor: ownable ? "#333" : "transparent",
+                    color: ownable && !isOwned ? "white" : "transparent",
+                    backgroundColor: ownable && !isOwned ? "#333" : "transparent",
                     borderRadius: "4px",
                     padding: "1px 4px",
                     WebkitTextStroke: "0px"
                 }}
             >
-                {ownable ? `$${ownable.cost}` : "\u00A0\u00A0\u00A0\u00A0"}
+                {ownable && !isOwned ? `$${ownable.cost}` : "\u00A0\u00A0\u00A0\u00A0"}
             </span>
 
             <PieceTray occupants={occupants} />
@@ -109,15 +111,18 @@ function ContentBlock({
 export default function Cell({
     property,
     color,
+    ownerColour,
     occupants = [],
     jailedOccupants = []
 }: {
     property: Property | OwnableProperty;
     color: string | undefined;
+    ownerColour?: string;
     occupants?: Player[];
     jailedOccupants?: Player[];
 }) {
     const ownable = isOwnableProperty(property) ? (property as OwnableProperty) : null;
+    const isOwned = ownerColour !== undefined;
     const isJailCell = property.type === PropertyType.JAIL;
     const stripSide = getStripSide(property.row, property.col);
     const isSideCol = stripSide === "left" || stripSide === "right";
@@ -127,6 +132,7 @@ export default function Cell({
         <ContentBlock
             property={property}
             ownable={ownable}
+            isOwned={isOwned}
             occupants={occupants}
             isSideCol={isSideCol}
         />
@@ -137,7 +143,7 @@ export default function Cell({
             style={{
                 gridRow: property.row,
                 gridColumn: property.col,
-                backgroundColor: BOARD_BG,
+                backgroundColor: isOwned ? ownerColour : BOARD_BG,
                 border: "1px solid black",
                 display: "flex",
                 flexDirection: ownable ? STRIP_FLEX_DIRECTION[stripSide] : "column",
